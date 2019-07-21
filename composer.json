@@ -1,0 +1,22 @@
+{
+    "name": "q8-intouch/q8-query",
+    "authors": [
+        {
+            "name": "kareem",
+            "email": "karim.salah2048@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Q8Intouch\\Q8Query\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Q8Intouch\\Q8Query\\Q8QueryServiceProvider"
+            ]
+        }
+    }
+}
