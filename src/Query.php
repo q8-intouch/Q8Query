@@ -119,38 +119,31 @@ class Query
     /**
      * attach queries according url segments
      *
-     * @param $model string
+     * @param $model Model
      * @return Model|Collection|string
      */
     public function attachQueriesFromParams($model)
     {
         for ($i = 1; $i < count($this->params); $i++) {
-            // TODO
-            // remove white lines
-            // check parenthesis
-            // parse model
-
-            // check if odd 1 % 2 = 1 i.e: true
-            if ($i % 2)
-            {
-                $model = $model->whereKey($this->params[$i])->first();
-            }
-            else
-                $model = $model->{$this->params[$i]}();
+            $model = $this->updateQueryByParamSection($i, $model);
         }
         return $model instanceof Model ? $model : $this->analyzeOptionalParams($model);
     }
 
     protected function analyzeOptionalParams($model){
+        // TODO
+        // remove white lines
+        // check parenthesis
+        // parse model
         return $model->get();
     }
 
     /**
      * @param $index
-     * @param $query Builder
+     * @param $query Builder|Model
      * @return Builder
      */
-    protected function getSegmentMainParam($index, $query){
+    protected function updateQueryByParamSection($index, $query){
         return $index % 2 ?  $query->whereKey($this->params[$index])->first() : $query->{$this->params[$index]}();
     }
 
