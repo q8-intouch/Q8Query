@@ -14,9 +14,11 @@ class Validator
     private $validationResult = true;
 
     /**
-     * holds all the available regexes available for paths combinations
-     * Dont use delimiters it is added later dynamically
-     *
+     * - holds all the available regexes available for paths combinations
+     * - Dont add delimiters it is added later dynamically
+     * - The pattern is as follows:
+     *      1. string only as start (not numbers is included) followed with '/' then a number
+     *      2. the pattern can be repeated n times infinity
      * @var array
      *
      */
@@ -25,6 +27,12 @@ class Validator
       '^[a-zA-Z]+$',
     ];
 
+    /**
+     * validate the string passed as URL if it is having an illegal format according to @see pathRegexes
+     *
+     * @param $path
+     * @return $this
+     */
     public function validatePath($path)
     {
         $regex = '/'. implode('|', static::$pathRegexes ) . '/';

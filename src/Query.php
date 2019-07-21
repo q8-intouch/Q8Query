@@ -9,8 +9,21 @@ use Q8Intouch\Q8Query\Core\Validator;
 
 class Query
 {
+
+    /**
+     * @var array
+     */
     public $params;
 
+    /**
+     *
+     * Query constructor.
+     * @param $params array with the following pattern ['Model', {id}, ....]
+     */
+    public function __construct($params)
+    {
+        $this->params = $params;
+    }
 
     /**
      * @param $path
@@ -27,6 +40,7 @@ class Query
         $query->params = explode('/', $path);
         return $query;
     }
+
 
 
 }

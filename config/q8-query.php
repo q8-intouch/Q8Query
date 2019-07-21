@@ -14,5 +14,5 @@ return [
     /**
      * url grouped by prefix ex: www.example.com/{url_prefix}/User
      */
-    "url_prefix" => 'Q8Queryy'
+    "url_prefix" => 'Q8Query'
 ];
