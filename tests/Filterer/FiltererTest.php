@@ -9,10 +9,12 @@ use ReflectionClass;
 class FiltererTest extends TestCase
 {
 
-    protected function setUp(): void
+    protected static function getMethod($name)
     {
-        parent::setUp();
-
+        $class = new ReflectionClass(Filterer::class);
+        $method = $class->getMethod($name);
+        $method->setAccessible(true);
+        return $method;
     }
 
 
@@ -27,7 +29,6 @@ class FiltererTest extends TestCase
         $this->assertEquals($method->invokeArgs(null, [$testCase]), $testResult);
 
     }
-
 
     public function splitBySpacesProvider()
     {
@@ -64,11 +65,4 @@ class FiltererTest extends TestCase
     }
 
 
-    protected static function getMethod($name)
-    {
-        $class = new ReflectionClass(Filterer::class);
-        $method = $class->getMethod($name);
-        $method->setAccessible(true);
-        return $method;
-    }
 }
