@@ -6,7 +6,9 @@
             "email": "karim.salah2048@gmail.com"
         }
     ],
-    "require": {},
+    "require": {
+        "orchestra/testbench": "^3.5"
+    },
     "autoload": {
         "psr-4": {
             "Q8Intouch\\Q8Query\\": "src/"
