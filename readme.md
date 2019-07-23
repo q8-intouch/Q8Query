@@ -24,3 +24,7 @@
 5. `only` to fetch certain params only 
 6. `expand` to fetch a related model
 7.  `expand` combined with `only` to fetch certain params
+
+# running tests
+for running the tests use:  `vendor/bin/phpunit` within the package directory
+or config phpstrom by using the config file `phpunit.xml` within the package dir

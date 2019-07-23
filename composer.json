@@ -14,11 +14,19 @@
             "Q8Intouch\\Q8Query\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Q8Intouch\\Q8Query\\Test\\": "tests/"
+        }
+    },
     "extra": {
         "laravel": {
             "providers": [
                 "Q8Intouch\\Q8Query\\Q8QueryServiceProvider"
             ]
         }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8.2"
     }
 }
