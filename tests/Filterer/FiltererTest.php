@@ -3,6 +3,7 @@
 namespace Q8Intouch\Q8Query\Test\Filterer;
 
 use Q8Intouch\Q8Query\Filterer\Filterer;
+use Q8Intouch\Q8Query\Filterer\NoStringMatchesFound;
 use Q8Intouch\Q8Query\Test\TestCase;
 use ReflectionClass;
 
@@ -39,6 +40,31 @@ class FiltererTest extends TestCase
         $this->assertEquals($this->splitBySpacesMethod->invokeArgs(null, [$testCase]), $testResult);
     }
 
+    /**
+     * @dataProvider splitBySpacesExceptionProvider
+     * @param $testCase
+     * @param $testResult
+     */
+    public function testSplitBySpacesException($testCase, $testResult)
+    {
+        $this->expectException($testResult);
+        $this->splitBySpacesMethod->invokeArgs(null, [$testCase]);
+    }
+
+
+
+    /**
+     * @dataProvider splitByLogicalTokensProvider
+     * @param $testCase
+     * @param $testResult
+     */
+    public function testSplitByLogicalTokens($testCase, $testResult)
+    {
+        $this->assertEquals($this->splitByLogicalTokensMethod->invokeArgs(null, [$testCase]), $testResult);
+    }
+
+
+
     public function splitBySpacesProvider()
     {
         return [
@@ -70,17 +96,27 @@ class FiltererTest extends TestCase
                 'no"spaces"',
                 ['no', '"spaces"']
             ],
+            [
+                "tab\tcheck",
+                ['tab', 'check']
+            ],
+            [
+                "new line\ncheck",
+                ['new', 'line', 'check']
+            ],
         ];
     }
 
-    /**
-     * @dataProvider splitByLogicalTokensProvider
-     * @param $testCase
-     * @param $testResult
-     */
-    public function testSplitByLogicalTokens($testCase, $testResult)
+    public function splitBySpacesExceptionProvider()
     {
-        $this->assertEquals($this->splitByLogicalTokensMethod->invokeArgs(null, [$testCase]), $testResult);
+        return [
+          ["", NoStringMatchesFound::class],
+          [" ", NoStringMatchesFound::class],
+          ["     ", NoStringMatchesFound::class],
+          ["\n", NoStringMatchesFound::class],
+          ["\t", NoStringMatchesFound::class],
+
+        ];
     }
 
     public function splitByLogicalTokensProvider()
