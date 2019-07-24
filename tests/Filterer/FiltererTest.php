@@ -10,14 +10,14 @@ class FiltererTest extends TestCase
 {
 
     private $splitBySpacesMethod;
-    private $splitByLogicalTokensMedthod;
+    private $splitByLogicalTokensMethod;
 
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->splitBySpacesMethod = self::getMethod('splitBySpaces');
-        $this->splitByLogicalTokensMedthod = self::getMethod('splitByLogicalTokens');
+        $this->splitByLogicalTokensMethod = self::getMethod('splitByLogicalTokens');
     }
 
     protected static function getMethod($name)
@@ -80,7 +80,7 @@ class FiltererTest extends TestCase
      */
     public function testSplitByLogicalTokens($testCase, $testResult)
     {
-        $this->assertEquals($this->splitByLogicalTokensMedthod->invokeArgs(null, [$testCase]), $testResult);
+        $this->assertEquals($this->splitByLogicalTokensMethod->invokeArgs(null, [$testCase]), $testResult);
     }
 
     public function splitByLogicalTokensProvider()
