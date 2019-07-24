@@ -14,3 +14,4 @@ yarn-error.log
 /.phpintel
 # exclude the generated files by mkdocs upon builds
 /site
+.phpunit.result.cache
