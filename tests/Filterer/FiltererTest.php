@@ -17,7 +17,7 @@ class FiltererTest extends TestCase
     {
         parent::setUp();
         $this->splitBySpacesMethod = self::getMethod('splitBySpaces');
-        $this->splitByLogicalTokensMedthod = self::getMethod('$splitByLogicalTokens');
+        $this->splitByLogicalTokensMedthod = self::getMethod('splitByLogicalTokens');
     }
 
     protected static function getMethod($name)
@@ -48,27 +48,27 @@ class FiltererTest extends TestCase
             ],
             [
                 "name2 eq 'some string'",
-                 ['name2', 'eq', "'some string'"]
+                ['name2', 'eq', "'some string'"]
             ],
             [
-                 'name eq \'some word',
-                 ['name', 'eq', 'some', 'word']
+                'name eq \'some word',
+                ['name', 'eq', 'some', 'word']
             ],
             [
-                 'name eq "some string" and "another"',
-                 ['name', 'eq', '"some string"', 'and', '"another"']
+                'name eq "some string" and "another"',
+                ['name', 'eq', '"some string"', 'and', '"another"']
             ],
             [
-                 '   some      extra     spaces       ',
-                 ['some', 'extra', 'spaces']
+                '   some      extra     spaces       ',
+                ['some', 'extra', 'spaces']
             ],
             [
-                 'escape quote "test \' and \'"',
-                 ['escape', 'quote', '"test \' and \'"']
+                'escape quote "test \' and \'"',
+                ['escape', 'quote', '"test \' and \'"']
             ],
             [
-                 'no"spaces"',
-                 ['no', '"spaces"']
+                'no"spaces"',
+                ['no', '"spaces"']
             ],
         ];
     }
@@ -80,12 +80,103 @@ class FiltererTest extends TestCase
      */
     public function testSplitByLogicalTokens($testCase, $testResult)
     {
-        
+        $this->assertEquals($this->splitByLogicalTokensMedthod->invokeArgs(null, [$testCase]), $testResult);
     }
 
     public function splitByLogicalTokensProvider()
     {
-        return [];
+        return [
+            [
+                ['normal', 'string', 'array'],
+                [
+                    [
+                        "logical" => "and",
+                        "expr" => ['normal', 'string', 'array']
+                    ],
+                ]
+            ],
+            [
+                ['"string and string"'],
+                [
+                    [
+                        "logical" => "and",
+                        "expr" => ['"string and string"']
+                    ],
+                ]
+            ],
+            [
+                ['"string"', 'and', 'another string'],
+                [
+                    [
+                        "logical" => "and",
+                        "expr" => ['"string"']
+                    ],
+                    [
+                        "logical" => "and",
+                        "expr" => ['another string']
+                    ],
+                ]
+            ],
+            [
+                ['"string"', 'or', 'another', 'string'],
+                [
+                    [
+                        "logical" => "and",
+                        "expr" => ['"string"']
+                    ],
+                    [
+                        "logical" => "or",
+                        "expr" => ['another', 'string']
+                    ],
+                ]
+            ],
+            [
+                ['"string"', 'or', 'and', 'another', 'string'],
+                [
+                    [
+                        "logical" => "and",
+                        "expr" => ['"string"']
+                    ],
+                    [
+                        "logical" => "or",
+                        "expr" => []
+                    ],
+                    [
+                        "logical" => "and",
+                        "expr" => ['another', 'string']
+                    ],
+                ]
+            ],
+            [
+                ['string', 'or', 'and'],
+                [
+                    [
+                        "logical" => "and",
+                        "expr" => ['string']
+                    ],
+                    [
+                        "logical" => "or",
+                        "expr" => []
+                    ],[
+                        "logical" => "and",
+                        "expr" => []
+                    ],
+                ]
+            ],
+            [
+                ['or', 'string'],
+                [
+                    [
+                        "logical" => "and",
+                        "expr" => []
+                    ],
+                    [
+                        "logical" => "or",
+                        "expr" => ['string']
+                    ]
+                ]
+            ],
+        ];
     }
 
 }

@@ -4,6 +4,7 @@ namespace Q8Intouch\Q8Query\Filterer;
 
 
 use Illuminate\Http\Request;
+use Q8Intouch\Q8Query\Core\Defaults;
 
 class Filterer
 {
@@ -74,15 +75,15 @@ class Filterer
      *      output:
      *              [
      *                  [
-     *                      logic = ""
+     *                      logical = "and"
      *                      expr = ["name",    "eq",    "some string"],
      *                  ],
      *                  [
-     *                      logic = "and"
+     *                      logical = "and"
      *                      expr = ["id",    "ne",    1],
      *                  ],
      *                  [
-     *                      logic = "or"
+     *                      logical = "or"
      *                      expr = ["id",    "eq",    1],
      *                  ],
      *              ]
@@ -130,7 +131,7 @@ class Filterer
         // however after complexity analysis, the following loop has faster execution time
         for ($i = 0; $i < count($lexemes); $i++) {
             if ($token = static::isLogicalToken($lexemes[$i])) {
-                $result[] = static::extractExpressionArray($lexemes, $token, $start, $i);
+                $result[] = static::extractExpressionArray($lexemes, $nextLogical, $start, $i);
                 $nextLogical = $token;
                 $start = $i + 1;
             }
@@ -165,9 +166,9 @@ class Filterer
      */
     protected static function isLogicalToken($lexeme)
     {
-        foreach (static::$logicalTokens as $key => $token)
-            if ($lexeme == config('q8-query.tokens.' . $token))
-                return $key;
+        foreach (static::$logicalTokens as  $token)
+            if ($lexeme == config('q8-query.tokens.' . $token, Defaults::getToken($token)))
+                return $token;
 
         return null;
 
