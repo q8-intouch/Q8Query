@@ -73,8 +73,7 @@ class Query
     public function build()
     {
         /** @noinspection PhpUndefinedMethodInspection */
-        $model = $this->getModel();
-        return $this->attachQueriesFromParams(new $model);
+        return $this->attachQueriesFromParams($this->getModel()::query());
 
     }
 
