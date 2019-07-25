@@ -28,11 +28,12 @@ class Filterer
      *
      * However the concepts used later are much more higher level i.e no need to iterate char by char
      *  as a higher methods can be used from  the native php implementation
-     *
+     * @param $params
      */
 
-    public function __construct()
+    public function __construct($params)
     {
+
     }
 
     /**
@@ -69,24 +70,10 @@ class Filterer
     }
 
     /**
-     * extract parameter 2d array from string where each row will contain a possible query
+     * extract parameters as expression array from string where each row will contain a possible query
      * ex:
      *      input:  name eq "some string" and id ne 1 or id eq 1
-     *      output:
-     *              [
-     *                  [
-     *                      logical = "and"
-     *                      expr = ["name",    "eq",    "some string"],
-     *                  ],
-     *                  [
-     *                      logical = "and"
-     *                      expr = ["id",    "ne",    1],
-     *                  ],
-     *                  [
-     *                      logical = "or"
-     *                      expr = ["id",    "eq",    1],
-     *                  ],
-     *              ]
+     *      output: expression array
      *
      * grouping operators aren't yet supported
      *
@@ -119,7 +106,7 @@ class Filterer
     /**
      * convert 1d array to 2d array at the index of logical operators
      * @param $lexemes array
-     * @return array
+     * @return Expression[]
      */
     protected static function splitByLogicalTokens($lexemes)
     {
@@ -149,13 +136,10 @@ class Filterer
      * @param $logical string
      * @param $start int
      * @param $end int
-     * @return array
+     * @return Expression
      */
     protected static function extractExpressionArray($lexemes, $logical, $start, $end){
-        return [
-            'logical' => $logical,
-            'expr' => array_slice($lexemes, $start, $end - $start)
-        ];
+        return new Expression($logical, array_slice($lexemes, $start, $end - $start));
     }
 
     /**

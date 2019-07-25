@@ -2,6 +2,7 @@
 
 namespace Q8Intouch\Q8Query\Test\Filterer;
 
+use Q8Intouch\Q8Query\Filterer\Expression;
 use Q8Intouch\Q8Query\Filterer\Filterer;
 use Q8Intouch\Q8Query\Filterer\NoStringMatchesFound;
 use Q8Intouch\Q8Query\Test\TestCase;
@@ -52,7 +53,6 @@ class FiltererTest extends TestCase
     }
 
 
-
     /**
      * @dataProvider splitByLogicalTokensProvider
      * @param $testCase
@@ -60,9 +60,10 @@ class FiltererTest extends TestCase
      */
     public function testSplitByLogicalTokens($testCase, $testResult)
     {
+//        dump($this->splitByLogicalTokensMethod->invokeArgs(null, [$testCase]));
+//        dump($testResult);
         $this->assertEquals($this->splitByLogicalTokensMethod->invokeArgs(null, [$testCase]), $testResult);
     }
-
 
 
     public function splitBySpacesProvider()
@@ -110,11 +111,11 @@ class FiltererTest extends TestCase
     public function splitBySpacesExceptionProvider()
     {
         return [
-          ["", NoStringMatchesFound::class],
-          [" ", NoStringMatchesFound::class],
-          ["     ", NoStringMatchesFound::class],
-          ["\n", NoStringMatchesFound::class],
-          ["\t", NoStringMatchesFound::class],
+            ["", NoStringMatchesFound::class],
+            [" ", NoStringMatchesFound::class],
+            ["     ", NoStringMatchesFound::class],
+            ["\n", NoStringMatchesFound::class],
+            ["\t", NoStringMatchesFound::class],
 
         ];
     }
@@ -125,91 +126,50 @@ class FiltererTest extends TestCase
             [
                 ['normal', 'string', 'array'],
                 [
-                    [
-                        "logical" => "and",
-                        "expr" => ['normal', 'string', 'array']
-                    ],
+                    new Expression("and", ['normal', 'string', 'array'])
                 ]
             ],
             [
                 ['"string and string"'],
                 [
-                    [
-                        "logical" => "and",
-                        "expr" => ['"string and string"']
-                    ],
-                ]
+                    new Expression("and", ['"string and string"'])
+                ],
             ],
             [
                 ['"string"', 'and', 'another string'],
                 [
-                    [
-                        "logical" => "and",
-                        "expr" => ['"string"']
-                    ],
-                    [
-                        "logical" => "and",
-                        "expr" => ['another string']
-                    ],
-                ]
+                    new Expression("and", ['"string"']),
+                    new Expression("and", ['another string'])
+                ],
             ],
             [
                 ['"string"', 'or', 'another', 'string'],
                 [
-                    [
-                        "logical" => "and",
-                        "expr" => ['"string"']
-                    ],
-                    [
-                        "logical" => "or",
-                        "expr" => ['another', 'string']
-                    ],
-                ]
+                    new Expression("and", ['"string"']),
+                    new Expression("or", ['another', 'string'])
+                ],
             ],
             [
                 ['"string"', 'or', 'and', 'another', 'string'],
                 [
-                    [
-                        "logical" => "and",
-                        "expr" => ['"string"']
-                    ],
-                    [
-                        "logical" => "or",
-                        "expr" => []
-                    ],
-                    [
-                        "logical" => "and",
-                        "expr" => ['another', 'string']
-                    ],
-                ]
+                    new Expression("and", ['"string"']),
+                    new Expression("or", []),
+                    new Expression("and", ['another', 'string'])
+                ],
             ],
             [
                 ['string', 'or', 'and'],
                 [
-                    [
-                        "logical" => "and",
-                        "expr" => ['string']
-                    ],
-                    [
-                        "logical" => "or",
-                        "expr" => []
-                    ],[
-                        "logical" => "and",
-                        "expr" => []
-                    ],
-                ]
+                    new Expression("and", ['string']),
+                    new Expression("or", []),
+                    new Expression("and", [])
+                ],
             ],
             [
                 ['or', 'string'],
                 [
-                    [
-                        "logical" => "and",
-                        "expr" => []
-                    ],
-                    [
-                        "logical" => "or",
-                        "expr" => ['string']
-                    ]
+                    new Expression("and", []),
+                    new Expression("or", ['string'])
                 ]
             ],
         ];
