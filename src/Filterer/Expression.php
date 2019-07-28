@@ -7,7 +7,7 @@ namespace Q8Intouch\Q8Query\Filterer;
 class Expression
 {
     public $logical;
-    public $expression;
+    public $lexemes;
 
     /**
      * Expression constructor.
@@ -17,7 +17,7 @@ class Expression
     public function __construct($logical, $expression)
     {
         $this->logical = $logical;
-        $this->expression = $expression;
+        $this->lexemes = $expression;
     }
 
 

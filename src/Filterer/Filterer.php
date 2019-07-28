@@ -8,6 +8,10 @@ use Q8Intouch\Q8Query\Core\Defaults;
 
 class Filterer
 {
+    /**
+     * @var Expression[]
+     */
+    private $expressions;
 
 
     protected static $logicalTokens = [
@@ -28,12 +32,12 @@ class Filterer
      *
      * However the concepts used later are much more higher level i.e no need to iterate char by char
      *  as a higher methods can be used from  the native php implementation
-     * @param $params
+     * @param $expressions Expression[]
      */
 
-    public function __construct($params)
+    public function __construct($expressions)
     {
-
+        $this->expressions = $expressions;
     }
 
     /**
@@ -65,8 +69,8 @@ class Filterer
 
         // change to a 2d array using the logic operators
         // turn into a
-        $params = static::extractParamsFromString($s);
-        return new Filterer();
+        $expressions = static::extractParamsFromString($s);
+        return new Filterer($expressions);
     }
 
     /**
@@ -156,5 +160,13 @@ class Filterer
 
         return null;
 
+    }
+
+    public function filter($query)
+    {
+        foreach ($this->expressions as $expression)
+        {
+
+        }
     }
 }

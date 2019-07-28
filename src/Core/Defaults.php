@@ -25,7 +25,7 @@ class Defaults
      * these values are required for validation later
      * if a new token was added later i wont able to
      * force the user to update the config file
-     * so all the token must fallback to theses function
+     * so all the token must fallback to this function
      * @param $key
      * @return mixed
      */
@@ -34,4 +34,9 @@ class Defaults
         return static::$tokens[$key];
     }
 
+    public  static $attributeRegex = "/^[a-zA-Z]+[0-9a-zA-Z]*$/";
+
+    public static $valueRegex = '/^.*$/';
+
+    public  static $nestableAttributeRegex = "/^[a-zA-Z]+\.?[0-9a-zA-Z]*$/";
 }
