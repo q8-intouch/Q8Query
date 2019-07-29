@@ -25,7 +25,7 @@ class Validator
      */
     protected static function getComparisonRules()
     {
-        $operators = ['=', '!=', '>', '>=', '<', '<='];
+        $operators = ['=', '!=', '>', '>=', '<', '<=', 'like'];
 
         // each operator having it own rule for further customization if needed
         $rules = [];

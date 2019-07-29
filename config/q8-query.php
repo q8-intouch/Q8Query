@@ -38,5 +38,6 @@ return [
         '<'   => 'lt',
         '<='   => 'le',
         'has' => 'has',
+        'like' => 'contain'
     ],
 ];

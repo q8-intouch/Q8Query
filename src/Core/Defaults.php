@@ -17,6 +17,7 @@ class Defaults
         '<'   => 'lt',
         '<='   => 'le',
         'has' => 'has',
+        'like' => 'contain',
     ];
 
     /**

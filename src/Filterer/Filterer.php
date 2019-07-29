@@ -183,6 +183,7 @@ class Filterer
                 // this will throw if a different comparison rule size was specified other than 3
                 // TODO
                 // update this to locate the token index and replace the lexeme with operator at the same index
+                $this->updateValuesForSpecialCases($lexemes, $operator);
                 $query->{$this->getClauseFromExpression($expression)}($lexemes[0],
                     $operator, preg_replace("/('|\")/", "", $lexemes[2]));
 
@@ -199,6 +200,18 @@ class Filterer
     protected function getClauseFromExpression($expression)
     {
         return static::$logicalTokens[$expression->logical];
+    }
+
+    /**
+     * @param $lexemes array
+     * @param $operator
+     */
+    protected function updateValuesForSpecialCases(&$lexemes, &$operator)
+    {
+        if ($operator == 'like')
+        {
+            $lexemes[2] = '%' . $lexemes[2] . '%';
+        }
     }
 
 }
