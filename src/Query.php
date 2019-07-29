@@ -10,6 +10,9 @@ use Illuminate\Support\Collection;
 use Q8Intouch\Q8Query\Core\ModelNotFoundException;
 use Q8Intouch\Q8Query\Core\ParamsMalformedException;
 use Q8Intouch\Q8Query\Core\Validator;
+use Q8Intouch\Q8Query\Filterer\Filterer;
+use Q8Intouch\Q8Query\Filterer\NoQueryParameterFound;
+use Q8Intouch\Q8Query\Filterer\NoStringMatchesFound;
 
 class Query
 {
@@ -129,12 +132,22 @@ class Query
         return $model instanceof Model ? $model : $this->analyzeOptionalParams($model);
     }
 
+    /**
+     * @param $model
+     * @return mixed
+     * @throws NoStringMatchesFound
+     */
     protected function analyzeOptionalParams($model){
         // TODO
         // remove white lines
         // check parenthesis
         // parse model
-        return $model->get();
+        try {
+            $filterer = Filterer::createFromRequest();
+            $filterer->filter($model);
+        } catch (NoQueryParameterFound $e) {
+        }
+        return   $model->get();
     }
 
     /**

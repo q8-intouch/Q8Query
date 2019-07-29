@@ -2,6 +2,11 @@
 
 namespace Q8Intouch\Q8Query\Test\Filterer;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use \Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Support\Facades\DB;
+use Q8Intouch\Q8Query\Core\Defaults;
 use Q8Intouch\Q8Query\Filterer\Expression;
 use Q8Intouch\Q8Query\Filterer\Filterer;
 use Q8Intouch\Q8Query\Filterer\NoStringMatchesFound;
@@ -60,8 +65,6 @@ class FiltererTest extends TestCase
      */
     public function testSplitByLogicalTokens($testCase, $testResult)
     {
-//        dump($this->splitByLogicalTokensMethod->invokeArgs(null, [$testCase]));
-//        dump($testResult);
         $this->assertEquals($this->splitByLogicalTokensMethod->invokeArgs(null, [$testCase]), $testResult);
     }
 

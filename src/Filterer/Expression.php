@@ -12,12 +12,12 @@ class Expression
     /**
      * Expression constructor.
      * @param $logical
-     * @param $expression
+     * @param $lexemes
      */
-    public function __construct($logical, $expression)
+    public function __construct($logical, $lexemes)
     {
         $this->logical = $logical;
-        $this->lexemes = $expression;
+        $this->lexemes = $lexemes;
     }
 
 

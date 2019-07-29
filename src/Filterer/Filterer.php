@@ -3,6 +3,8 @@
 namespace Q8Intouch\Q8Query\Filterer;
 
 
+use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Q8Intouch\Q8Query\Core\Defaults;
 
@@ -15,8 +17,8 @@ class Filterer
 
 
     protected static $logicalTokens = [
-        'or',
-        'and'
+        'or' => 'orWhere',
+        'and' => 'where'
     ];
 
     /**
@@ -47,11 +49,16 @@ class Filterer
      * @param Request|null $request
      * @return Filterer
      * @throws NoStringMatchesFound
+     * @throws NoQueryParameterFound
      */
     public static function createFromRequest(Request $request = null)
     {
         if (!$request)
            $request = Request::createFromGlobals();
+        if (!$request->has(config('filterer', 'filter')))
+        {
+            throw new NoQueryParameterFound('Param: ' . config('filterer', 'filter') . " wasn't found");
+        }
         return static::createFromString($request->query('filter'));
     }
 
@@ -154,8 +161,8 @@ class Filterer
      */
     protected static function isLogicalToken($lexeme)
     {
-        foreach (static::$logicalTokens as  $token)
-            if ($lexeme == config('q8-query.tokens.' . $token, Defaults::getToken($token)))
+        foreach (static::$logicalTokens as  $token => $value)
+            if ($lexeme == Defaults::getToken($token))
                 return $token;
 
         return null;
@@ -164,9 +171,34 @@ class Filterer
 
     public function filter($query)
     {
+        $validator = new Validator();
+        if (!is_array($this->expressions))
+        {
+            // throw
+        }
         foreach ($this->expressions as $expression)
         {
+            $lexemes = $expression->lexemes;
+            if($validator->validateComparisonRules($expression->lexemes, $operator))
+                // this will throw if a different comparison rule size was specified other than 3
+                // TODO
+                // update this to locate the token index and replace the lexeme with operator at the same index
+                $query->{$this->getClauseFromExpression($expression)}($lexemes[0],
+                    $operator, preg_replace("/('|\")/", "", $lexemes[2]));
 
+            // else if check complex
+            // else throw
         }
+        return $query;
     }
+
+    /**
+     * @param $expression Expression
+     * @return mixed
+     */
+    protected function getClauseFromExpression($expression)
+    {
+        return static::$logicalTokens[$expression->logical];
+    }
+
 }

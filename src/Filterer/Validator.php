@@ -9,6 +9,15 @@ use Q8Intouch\Q8Query\Core\Defaults;
 class Validator
 {
 
+    private $comparisonRules;
+    private $complexComparisonRules;
+
+    public function __construct()
+    {
+        $this->comparisonRules = static::getComparisonRules();
+        $this->complexComparisonRules = static::getComplexComparisonRules();
+
+    }
 
     /**
      * rules that are strict and will be validated using size
@@ -61,7 +70,7 @@ class Validator
      */
     public function validateComparisonRules($lexemes, &$token = null )
     {
-        $rules = static::getComparisonRules();
+        $rules = $this->comparisonRules;
         foreach ($rules as $operator => $ruleArray)
         {
             // check if the validation rule size is the same as
