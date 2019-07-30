@@ -72,6 +72,7 @@ class Query
     /**
      * @return Model|Collection
      * @throws ModelNotFoundException
+     * @throws NoStringMatchesFound
      */
     public function build()
     {
@@ -123,6 +124,7 @@ class Query
      *
      * @param $model Model
      * @return Model|Collection|string
+     * @throws NoStringMatchesFound
      */
     public function attachQueriesFromParams($model)
     {
