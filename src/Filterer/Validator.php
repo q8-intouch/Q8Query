@@ -32,7 +32,7 @@ class Validator
         foreach ($operators as $operator)
                 $rules[$operator] = [
                     Defaults::$nestableAttributeRegex,
-                   '/^' . config($operator, Defaults::getToken($operator)) . '$/',
+                   '/^' . Defaults::tokenFromConfig($operator) . '$/',
                     Defaults::$valueRegex
                 ];
 

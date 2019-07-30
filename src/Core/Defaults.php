@@ -32,7 +32,12 @@ class Defaults
      */
     public static function getToken($key)
     {
-        return config('q8-query.tokens.'. $key, static::$tokens[$key]);
+        return  static::$tokens[$key];
+    }
+
+    public static function tokenFromConfig($key)
+    {
+        return config('q8-query.tokens.'. $key,  static::$tokens[$key]);
     }
 
     public  static $attributeRegex = "/^[a-zA-Z]+[0-9a-zA-Z]*$/";

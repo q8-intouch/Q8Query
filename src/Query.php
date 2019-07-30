@@ -81,8 +81,8 @@ class Query
     }
 
     /**
-     * build function has to be created first @see build
-     * @return Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|object|null
+     * build function has to be created first @return Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|object|null
+     * @see build
      */
     public function get()
     {
@@ -137,7 +137,8 @@ class Query
      * @return mixed
      * @throws NoStringMatchesFound
      */
-    protected function analyzeOptionalParams($model){
+    protected function analyzeOptionalParams($model)
+    {
         // TODO
         // remove white lines
         // check parenthesis
@@ -147,7 +148,7 @@ class Query
             $filterer->filter($model);
         } catch (NoQueryParameterFound $e) {
         }
-        return   $model->get();
+        return $model->get();
     }
 
     /**
@@ -155,8 +156,9 @@ class Query
      * @param $query Builder|Model
      * @return Builder
      */
-    protected function updateQueryByParamSection($index, $query){
-        return $index % 2 ?  $query->whereKey($this->params[$index])->first() : $query->{$this->params[$index]}();
+    protected function updateQueryByParamSection($index, $query)
+    {
+        return $index % 2 ? $query->whereKey($this->params[$index])->first() : $query->{$this->params[$index]}();
     }
 
 

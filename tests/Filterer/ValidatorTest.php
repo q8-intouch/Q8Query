@@ -3,12 +3,8 @@
 namespace Q8Intouch\Q8Query\Test\Filterer;
 
 use Q8Intouch\Q8Query\Core\Defaults;
-use Q8Intouch\Q8Query\Filterer\Expression;
-use Q8Intouch\Q8Query\Filterer\Filterer;
-use Q8Intouch\Q8Query\Filterer\NoStringMatchesFound;
 use Q8Intouch\Q8Query\Filterer\Validator;
 use Q8Intouch\Q8Query\Test\TestCase;
-use ReflectionClass;
 
 class ValidatorTest extends TestCase
 {
@@ -101,6 +97,11 @@ class ValidatorTest extends TestCase
                 ['test', Defaults::getToken('='), '"quoted spaces"'],
                 true,
                 '='
+            ],
+            [
+                ['test', Defaults::getToken('=')],
+                false,
+                null
             ],
         ];
     }

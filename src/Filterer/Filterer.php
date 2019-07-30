@@ -3,8 +3,6 @@
 namespace Q8Intouch\Q8Query\Filterer;
 
 
-use App\Models\User;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Q8Intouch\Q8Query\Core\Defaults;
 
@@ -54,9 +52,8 @@ class Filterer
     public static function createFromRequest(Request $request = null)
     {
         if (!$request)
-           $request = Request::createFromGlobals();
-        if (!$request->has(config('filterer', 'filter')))
-        {
+            $request = Request::createFromGlobals();
+        if (!$request->has(config('filterer', 'filter'))) {
             throw new NoQueryParameterFound('Param: ' . config('filterer', 'filter') . " wasn't found");
         }
         return static::createFromString($request->query('filter'));
@@ -71,7 +68,8 @@ class Filterer
      * @return Filterer
      * @throws NoStringMatchesFound
      */
-    public static function createFromString(string $s){
+    public static function createFromString(string $s)
+    {
 
 
         // change to a 2d array using the logic operators
@@ -94,7 +92,8 @@ class Filterer
      * @return array
      * @throws NoStringMatchesFound
      */
-    protected static function extractParamsFromString(string $s){
+    protected static function extractParamsFromString(string $s)
+    {
         $lexers = static::splitBySpaces($s);
         return static::splitByLogicalTokens($lexers);
     }
@@ -149,7 +148,8 @@ class Filterer
      * @param $end int
      * @return Expression
      */
-    protected static function extractExpressionArray($lexemes, $logical, $start, $end){
+    protected static function extractExpressionArray($lexemes, $logical, $start, $end)
+    {
         return new Expression($logical, array_slice($lexemes, $start, $end - $start));
     }
 
@@ -161,8 +161,8 @@ class Filterer
      */
     protected static function isLogicalToken($lexeme)
     {
-        foreach (static::$logicalTokens as  $token => $value)
-            if ($lexeme == Defaults::getToken($token))
+        foreach (static::$logicalTokens as $token => $value)
+            if ($lexeme == Defaults::tokenFromConfig($token))
                 return $token;
 
         return null;
@@ -172,21 +172,19 @@ class Filterer
     public function filter($query)
     {
         $validator = new Validator();
-        if (!is_array($this->expressions))
-        {
+        if (!is_array($this->expressions)) {
             // throw
         }
-        foreach ($this->expressions as $expression)
-        {
+        foreach ($this->expressions as $expression) {
             $lexemes = $expression->lexemes;
-            if($validator->validateComparisonRules($expression->lexemes, $operator))
+            if ($validator->validateComparisonRules($expression->lexemes, $operator)) {
                 // this will throw if a different comparison rule size was specified other than 3
                 // TODO
                 // update this to locate the token index and replace the lexeme with operator at the same index
                 $this->updateValuesForSpecialCases($lexemes, $operator);
                 $query->{$this->getClauseFromExpression($expression)}($lexemes[0],
                     $operator, preg_replace("/('|\")/", "", $lexemes[2]));
-
+            }
             // else if check complex
             // else throw
         }
@@ -208,8 +206,7 @@ class Filterer
      */
     protected function updateValuesForSpecialCases(&$lexemes, &$operator)
     {
-        if ($operator == 'like')
-        {
+        if ($operator == 'like') {
             $lexemes[2] = '%' . $lexemes[2] . '%';
         }
     }
