@@ -30,11 +30,11 @@ class Validator
         // each operator having it own rule for further customization if needed
         $rules = [];
         foreach ($operators as $operator)
-                $rules[$operator] = [
-                    Defaults::$nestableAttributeRegex,
-                   '/^' . Defaults::tokenFromConfig($operator) . '$/',
-                    Defaults::$valueRegex
-                ];
+            $rules[$operator] = [
+                Defaults::$nestableAttributeRegex,
+                '/^' . Defaults::tokenFromConfig($operator) . '$/',
+                Defaults::$valueRegex
+            ];
 
         return $rules;
     }
@@ -42,24 +42,18 @@ class Validator
     /**
      * rules that aren't having a certain pattern or rule
      * no specific size, can consist of a sub simple rule, or can have multiple valid rules
-     * customized rules can be added by specifying the function name without the get prefix
-     * ex: to validate against function named getComparisonRules add '{ComparisonRules}' as
+     * customized rules can be added by specifying the function name
+     * ex: 'has' operator is validated using 'validateHasOperator' function
+     * so the array has to specify the validateHasOperator with in the key 'has'
+     * functions must accept the following params:
+     *      1. lexemes: array
      * the following
      * @return array
      */
-    protected static function getComplexComparisonRules(){
+    protected static function getComplexComparisonRules()
+    {
         return [
-            'has' => [
-                [
-                    '{token}',
-                    Defaults::$nestableAttributeRegex
-                ],
-                [
-                    '{token}',
-                    '{ComparisonRules}' // a comparison rule can be inserted here
-                ],
-
-            ]
+            'has' => 'validateHasOperator'
         ];
     }
 
@@ -68,26 +62,23 @@ class Validator
      * @param $token
      * @return bool
      */
-    public function validateComparisonRules($lexemes, &$token = null )
+    public function validateComparisonRules($lexemes, &$token = null)
     {
         $rules = $this->comparisonRules;
-        foreach ($rules as $operator => $ruleArray)
-        {
+        foreach ($rules as $operator => $ruleArray) {
             // check if the validation rule size is the same as
-            if (count($ruleArray) == count($lexemes))
-            {
+            if (count($ruleArray) == count($lexemes)) {
                 // assume the validity of the rules
                 $isValid = true;
 
                 // check if rules apply to the full array
                 for ($i = 0; $i < count($ruleArray); $i++) {
                     // set validity to false if not
-                   if (!preg_match($ruleArray[$i], $lexemes[$i]))
+                    if (!preg_match($ruleArray[$i], $lexemes[$i]))
                         $isValid = false;
                 }
                 // check if still valid
-                if ($isValid)
-                {
+                if ($isValid) {
                     $token = $operator;
                     return true;
                 }
@@ -98,4 +89,40 @@ class Validator
 
         return false;
     }
+
+    /**
+     * @param $lexemes
+     * @param null $operator
+     * @return bool
+     */
+    public function validateComplexComparisonRules($lexemes,
+                                                   &$operator = null)
+    {
+        // return false if lexemes are empty
+        if (!count($lexemes))
+            return false;
+
+        // check for special cases
+        foreach ($this->complexComparisonRules as $key => $function)
+        {
+            if ($this->{$function}($lexemes))
+            {
+                $operator = $key;
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+    /**
+     * @param $lexemes
+     * @return bool
+     */
+    protected function validateHasOperator($lexemes)
+    {
+        return count ($lexemes)  > 1 && $lexemes[0] == 'has';
+    }
+
+
 }

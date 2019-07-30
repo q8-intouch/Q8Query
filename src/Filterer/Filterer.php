@@ -186,6 +186,7 @@ class Filterer
                     $operator, preg_replace("/('|\")/", "", $lexemes[2]));
             }
             // else if check complex
+//            else if ($validator)
             // else throw
         }
         return $query;

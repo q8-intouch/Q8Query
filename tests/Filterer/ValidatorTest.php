@@ -24,6 +24,17 @@ class ValidatorTest extends TestCase
         self::assertEquals((new Validator())->validateComparisonRules($lexemes, $resultToken), $result);
         self::assertEquals($resultToken, $token);
     }
+    /**
+     * @dataProvider validateComplexComparisonRulesProvider
+     * @param $lexemes
+     * @param $result
+     * @param $token
+     */
+    public function testValidateComplexComparisonRules($lexemes, $result, $token)
+    {
+        self::assertEquals((new Validator())->validateComplexComparisonRules($lexemes, $resultToken), $result);
+        self::assertEquals($resultToken, $token);
+    }
 
     public function validateComparisonRulesProvider()
     {
@@ -106,16 +117,36 @@ class ValidatorTest extends TestCase
         ];
     }
 
-    public function provider()
+    public function validateComplexComparisonRulesProvider()
     {
         return [
             [
                 [Defaults::getToken('has'), 'addresses.name'],
-                false,
+                true,
                 'has'
             ],
             [
                 [Defaults::getToken('has'), 'addresses.name', 'eq', 'name'],
+                true,
+                'has'
+            ],
+            [
+                ['text', 'addresses.name', 'eq', 'name'],
+                false,
+                null
+            ],
+            [
+                [Defaults::getToken('has')],
+                false,
+                null
+            ],
+            [
+                [],
+                false,
+                null
+            ],
+            [
+                [Defaults::getToken('has'), 'name', 'eq', ],
                 true,
                 'has'
             ],

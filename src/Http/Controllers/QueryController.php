@@ -14,8 +14,8 @@ class QueryController extends BaseController
 {
     public function get(Request $request, $url)
     {
-//        User::getA();
-        return Query::QueryFromPathString($url)->build();
+        return User::whereHas('order.address')->get();
+//        return Query::QueryFromPathString($url)->build();
 //        return User::whereKey(1)->first()->order()->whereKey(1)->first()->coupon()->whereKey(1)->first();
 //        return $url;
     }
