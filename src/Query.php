@@ -82,7 +82,8 @@ class Query
     }
 
     /**
-     * build function has to be created first @return Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|object|null
+     * build function has to be created first
+     * @return Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|object|null
      * @see build
      */
     public function get()

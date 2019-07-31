@@ -3,6 +3,7 @@
 namespace Q8Intouch\Q8Query\Filterer;
 
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Q8Intouch\Q8Query\Core\Defaults;
 
@@ -13,10 +14,18 @@ class Filterer
      */
     private $expressions;
 
+    /**
+     * @var Validator
+     */
+    protected $validator;
 
     protected static $logicalTokens = [
         'or' => 'orWhere',
         'and' => 'where'
+    ];
+
+    protected $complexFilters = [
+        'has' => 'filterByHas'
     ];
 
     /**
@@ -38,6 +47,7 @@ class Filterer
     public function __construct($expressions)
     {
         $this->expressions = $expressions;
+        $this->validator = new Validator();
     }
 
     /**
@@ -169,26 +179,27 @@ class Filterer
 
     }
 
+    /**
+     * @param $query Builder
+     * @return mixed
+     */
     public function filter($query)
     {
-        $validator = new Validator();
         if (!is_array($this->expressions)) {
             // throw
         }
         foreach ($this->expressions as $expression) {
             $lexemes = $expression->lexemes;
-            if ($validator->validateComparisonRules($expression->lexemes, $operator)) {
-                // this will throw if a different comparison rule size was specified other than 3
-                // TODO
-                // update this to locate the token index and replace the lexeme with operator at the same index
-                $this->updateValuesForSpecialCases($lexemes, $operator);
-                $query->{$this->getClauseFromExpression($expression)}($lexemes[0],
-                    $operator, preg_replace("/('|\")/", "", $lexemes[2]));
+            if ($this->validator->validateComparisonRules($lexemes, $operator)) {
+                $this->attachSimpleComparisonRule($query, $expression, $operator);
+            } else if ($this->validator->validateComplexComparisonRules($lexemes, $operator)) {
+                $this->{$this->complexFilters[$operator]}($query, $expression);
             }
             // else if check complex
 //            else if ($validator)
             // else throw
         }
+        $query->toSql();
         return $query;
     }
 
@@ -202,6 +213,26 @@ class Filterer
     }
 
     /**
+     * @param $query
+     * @param $expression Expression
+     * @param $operator
+     */
+    protected function attachSimpleComparisonRule($query, $expression, $operator)
+    {
+        // this will throw if a different comparison rule size was specified other than 3
+        // TODO
+        // update this to locate the token index and replace the lexeme with operator at the same index
+        $table_name = $query->getModel()->getTable();
+        $lexemes = $expression->lexemes;
+        $this->updateValuesForSpecialCases($lexemes, $operator);
+        $query->{$this->getClauseFromExpression($expression)}($table_name . '.' . $lexemes[0],
+            // trim the single and double quotes
+            // TODO
+            // change this to a global replacer, so wont have to call this each time
+            $operator, preg_replace("/('|\")/", "", $lexemes[2]));
+    }
+
+    /**
      * @param $lexemes array
      * @param $operator
      */
@@ -210,6 +241,47 @@ class Filterer
         if ($operator == 'like') {
             $lexemes[2] = '%' . $lexemes[2] . '%';
         }
+    }
+
+    /**
+     * @param $query Builder
+     * @param $expression Expression
+     */
+    protected function filterByHas($query, $expression)
+    {
+        $lexemes = $expression->lexemes;
+        if (count($lexemes) == 2) {
+            $query->whereHas($lexemes[1]);
+            return;
+        }
+        $subLexemes = array_slice($lexemes, 1);
+        if ($this->validator->validateComparisonRules($subLexemes, $operator)) {
+
+            $related = static::splitRelatedAndAttribute($lexemes[1]);
+            // validate against basic rules
+            $subLexemes[0] = $related[1];
+            $query->{$this->getHasClosure($expression)}($related[0], function ($query) use ($related, $subLexemes, $operator) {
+                $this->attachSimpleComparisonRule($query, new Expression('and', $subLexemes), $operator);
+            });
+        }
+    }
+
+    protected function getHasClosure($expression)
+    {
+        return [
+            'and' => 'whereHas',
+            'or' => 'orWhereHas',
+        ][$expression->logical];
+    }
+
+    /**
+     * @param $str string
+     * @return array[]|false|string[]
+     */
+    protected static function splitRelatedAndAttribute($str)
+    {
+        // split at last occurrence
+        return preg_split('/\.(?=[^\.]*$)/', $str);
     }
 
 }

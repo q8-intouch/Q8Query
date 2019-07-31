@@ -13,6 +13,7 @@ class FiltererTest extends TestCase
 
     private $splitBySpacesMethod;
     private $splitByLogicalTokensMethod;
+    private $splitRelatedAndAttributeMethod;
 
 
     protected function setUp(): void
@@ -20,6 +21,7 @@ class FiltererTest extends TestCase
         parent::setUp();
         $this->splitBySpacesMethod = self::getMethod('splitBySpaces');
         $this->splitByLogicalTokensMethod = self::getMethod('splitByLogicalTokens');
+        $this->splitRelatedAndAttributeMethod = self::getMethod('splitRelatedAndAttribute');
     }
 
     protected static function getMethod($name)
@@ -61,6 +63,16 @@ class FiltererTest extends TestCase
     public function testSplitByLogicalTokens($testCase, $testResult)
     {
         $this->assertEquals($this->splitByLogicalTokensMethod->invokeArgs(null, [$testCase]), $testResult);
+    }
+
+    /**
+     * @dataProvider splitRelatedAndAttributeProvider
+     * @param $testCase
+     * @param $testResult
+     */
+    public function testSplitRelatedAndAttribute($testCase, $testResult)
+    {
+        $this->assertEquals($this->splitRelatedAndAttributeMethod->invokeArgs(null, [$testCase]), $testResult);
     }
 
 
@@ -173,4 +185,15 @@ class FiltererTest extends TestCase
         ];
     }
 
+    public function splitRelatedAndAttributeProvider()
+    {
+        return [
+          ['user.name', ['user', 'name']],
+          ['user.address.name', ['user.address', 'name']],
+          ['user', ['user']],
+          ['user.', ['user','']],
+          ['user..', ['user.', '']],
+          ['user.name.', ['user.name', '']],
+        ];
+    }
 }

@@ -50,6 +50,11 @@ class ValidatorTest extends TestCase
                 '<'
             ],
             [
+                ['age', Defaults::getToken('>'), '5'],
+                true,
+                '>'
+            ],
+            [
                 ['age', Defaults::getToken('<'), '5', "test extra"],
                 false,
                 null

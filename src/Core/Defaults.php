@@ -44,5 +44,5 @@ class Defaults
 
     public static $valueRegex = '/^.*$/';
 
-    public  static $nestableAttributeRegex = "/^[a-zA-Z]+\.?[0-9a-zA-Z]*$/";
+    public  static $nestableAttributeRegex = "/^[a-zA-Z_]+(\.[a-zA-Z_]*)*$/";
 }
