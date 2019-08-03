@@ -6,6 +6,8 @@ namespace Q8Intouch\Q8Query\Filterer;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Q8Intouch\Q8Query\Core\Defaults;
+use Q8Intouch\Q8Query\Core\NoQueryParameterFound;
+use Q8Intouch\Q8Query\Core\NoStringMatchesFound;
 
 class Filterer
 {
@@ -63,10 +65,11 @@ class Filterer
     {
         if (!$request)
             $request = Request::createFromGlobals();
-        if (!$request->has(config('filterer', 'filter'))) {
-            throw new NoQueryParameterFound('Param: ' . config('filterer', 'filter') . " wasn't found");
+        $filtererKey = config('q8-query.filterer', 'filter');
+        if (!$request->has($filtererKey)) {
+            throw new NoQueryParameterFound('Param: ' . $filtererKey . " wasn't found");
         }
-        return static::createFromString($request->query('filter'));
+        return static::createFromString($request->query($filtererKey));
     }
 
     /**

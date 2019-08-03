@@ -22,6 +22,11 @@ return [
     "filterer" => 'filter',
 
     /**
+     * param key used for associating related models ex:  www.example.com/User?associate=orders,orders
+     */
+    "associator" => 'associate',
+
+    /**
      * tokens key words and are replaceable to suit any project
      * ex: `www.example.com/User?filter=name {eq} "ssss"`
      * the following array allows to replace the `eq` in the past example with any keyword that suits the project
@@ -40,4 +45,12 @@ return [
         'has' => 'has',
         'like' => 'contain'
     ],
+
+    /**
+     * values:
+     * 'strict': only call the relations having the appropriate annotation
+     * 'loss': fetch any relation regardless having an annotation or not
+     *
+     */
+    "relational-mode" => 'strict'
 ];

@@ -7,12 +7,13 @@ namespace Q8Intouch\Q8Query;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Q8Intouch\Q8Query\Associator\Associator;
 use Q8Intouch\Q8Query\Core\ModelNotFoundException;
+use Q8Intouch\Q8Query\Core\NoQueryParameterFound;
+use Q8Intouch\Q8Query\Core\NoStringMatchesFound;
 use Q8Intouch\Q8Query\Core\ParamsMalformedException;
 use Q8Intouch\Q8Query\Core\Validator;
 use Q8Intouch\Q8Query\Filterer\Filterer;
-use Q8Intouch\Q8Query\Filterer\NoQueryParameterFound;
-use Q8Intouch\Q8Query\Filterer\NoStringMatchesFound;
 
 class Query
 {
@@ -132,26 +133,24 @@ class Query
         for ($i = 1; $i < count($this->params); $i++) {
             $model = $this->updateQueryByParamSection($i, $model);
         }
-        return $model instanceof Model ? $model : $this->analyzeOptionalParams($model);
+        $this->prefetchOperations($model);
+
+        $result = $this->fetchIfBuilder($model);
+
+        return  $this->postfetchOperations($result);
     }
 
     /**
      * @param $model
-     * @return mixed
      * @throws NoStringMatchesFound
      */
-    protected function analyzeOptionalParams($model)
+    protected function addFilterQuery($model)
     {
-        // TODO
-        // remove white lines
-        // check parenthesis
-        // parse model
         try {
             $filterer = Filterer::createFromRequest();
             $filterer->filter($model);
         } catch (NoQueryParameterFound $e) {
         }
-        return $model->get();
     }
 
     /**
@@ -164,5 +163,50 @@ class Query
         return $index % 2 ? $query->whereKey($this->params[$index])->first() : $query->{$this->params[$index]}();
     }
 
+    /**
+     * @param $eloquent
+     * @throws NoStringMatchesFound
+     */
+    protected function prefetchOperations($eloquent)
+    {
+        if ($eloquent instanceof Model)
+            return;
+        else
+        {
+            $this->addFilterQuery($eloquent);
+
+        }
+
+    }
+
+    /**
+     * @param Model|array $model
+     * @return array|Model
+     */
+    protected function postFetchOperations($model)
+    {
+        return $model;
+    }
+
+    /**
+     * @param Builder|Model $model
+     * @return Builder|Builder[]|\Illuminate\Database\Eloquent\Collection|Model
+     */
+    protected function fetchIfBuilder($model)
+    {
+        return $model instanceof Model ? $model : $model->get();
+    }
+
+    /**
+     * @param $eloquent
+     * @throws NoStringMatchesFound
+     */
+    public function attachAssociates($eloquent)
+    {
+        try {
+            Associator::createFromRequest()->associate($eloquent);
+        } catch (NoQueryParameterFound $e) {
+        }
+    }
 
 }

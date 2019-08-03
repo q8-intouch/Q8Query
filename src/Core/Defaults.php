@@ -45,4 +45,6 @@ class Defaults
     public static $valueRegex = '/^.*$/';
 
     public  static $nestableAttributeRegex = "/^[a-zA-Z_]+(\.[a-zA-Z_]*)*$/";
+
+    public  static $relatedModelRegex = "/[a-zA-Z_\.]+/";
 }
