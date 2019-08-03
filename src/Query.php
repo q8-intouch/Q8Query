@@ -174,7 +174,7 @@ class Query
         else
         {
             $this->addFilterQuery($eloquent);
-
+            $this->attachAssociates($eloquent);
         }
 
     }
