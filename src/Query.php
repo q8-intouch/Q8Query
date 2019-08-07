@@ -14,6 +14,7 @@ use Q8Intouch\Q8Query\Core\NoStringMatchesFound;
 use Q8Intouch\Q8Query\Core\ParamsMalformedException;
 use Q8Intouch\Q8Query\Core\Validator;
 use Q8Intouch\Q8Query\Filterer\Filterer;
+use Q8Intouch\Q8Query\Selector\Selector;
 
 class Query
 {
@@ -175,6 +176,7 @@ class Query
         {
             $this->addFilterQuery($eloquent);
             $this->attachAssociates($eloquent);
+            $this->selectAttributesFromQuery($eloquent);
         }
 
     }
@@ -205,6 +207,18 @@ class Query
     {
         try {
             Associator::createFromRequest()->associate($eloquent);
+        } catch (NoQueryParameterFound $e) {
+        }
+    }
+
+    /**
+     * @param $query Builder
+     * @throws NoStringMatchesFound
+     */
+    public function selectAttributesFromQuery($query)
+    {
+        try {
+            Selector::createFromRequest()->selectFromQuery($query);
         } catch (NoQueryParameterFound $e) {
         }
     }

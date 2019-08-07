@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Q8Intouch\Q8Query\Core\Defaults;
 use Q8Intouch\Q8Query\Core\NoQueryParameterFound;
 use Q8Intouch\Q8Query\Core\NoStringMatchesFound;
+use Q8Intouch\Q8Query\Core\Utils;
 
 class Filterer
 {
@@ -39,7 +40,7 @@ class Filterer
      *  1. Concepts of Programming Languages by Boston University (sec 2,3,4)
      *      1.1. free version can be found at: https://cs-people.bu.edu/lapets/320/
      *  2. How Parsers and Compilers Work by  Stephen Raymond Ferg
-     *      2.1. article cn found at: http://parsingintro.sourceforge.net
+     *      2.1. article can found at: http://parsingintro.sourceforge.net
      *
      * However the concepts used later are much more higher level i.e no need to iterate char by char
      *  as a higher methods can be used from  the native php implementation
@@ -260,7 +261,7 @@ class Filterer
         $subLexemes = array_slice($lexemes, 1);
         if ($this->validator->validateComparisonRules($subLexemes, $operator)) {
 
-            $related = static::splitRelatedAndAttribute($lexemes[1]);
+            $related = Utils::splitRelatedAndAttribute($lexemes[1]);
             // validate against basic rules
             $subLexemes[0] = $related[1];
             $query->{$this->getHasClosure($expression)}($related[0], function ($query) use ($related, $subLexemes, $operator) {
@@ -277,14 +278,5 @@ class Filterer
         ][$expression->logical];
     }
 
-    /**
-     * @param $str string
-     * @return array[]|false|string[]
-     */
-    protected static function splitRelatedAndAttribute($str)
-    {
-        // split at last occurrence
-        return preg_split('/\.(?=[^\.]*$)/', $str);
-    }
 
 }
