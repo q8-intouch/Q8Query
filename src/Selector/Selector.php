@@ -2,6 +2,7 @@
 
 namespace Q8Intouch\Q8Query\Selector;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Q8Intouch\Q8Query\Core\Defaults;
@@ -89,17 +90,7 @@ class Selector
     {
 
 
-        $directAttributes = [];
-        $relatedAttributes = [];
-        foreach ($this->attributes as $attribute) {
-            // check if a related select
-            if (str_contains($attribute, '.')) {
-                [$key, $value] = Utils::splitRelatedAndAttribute($attribute);
-                $relatedAttributes[$key][] = $value;
-            }
-            else
-            $directAttributes[] = $attribute;
-        }
+        [$directAttributes, $relatedAttributes] = $this->getDirectAndRelatedAttributes();
 
         // select direct related attributes
         $query->select($directAttributes);
@@ -116,6 +107,47 @@ class Selector
     {
         foreach ($related as $relation => $columns)
             $query->with([$relation => function ($query) use ($columns)  {
+                $query->select($columns);
+            }]);
+    }
+
+    /**
+     * @return array
+     */
+    protected function getDirectAndRelatedAttributes()
+    {
+        $directAttributes = [];
+        $relatedAttributes = [];
+        foreach ($this->attributes as $attribute) {
+            // check if a related select
+            if (str_contains($attribute, '.')) {
+                [$key, $value] = Utils::splitRelatedAndAttribute($attribute);
+                $relatedAttributes[$key][] = $value;
+            }
+            else
+                $directAttributes[] = $attribute;
+        }
+
+        return [$directAttributes, $relatedAttributes];
+    }
+
+    /**
+     * @param $model Model
+     */
+    public function selectFromModel($model)
+    {
+        [$directAttributes, $relatedAttributes] = $this->getDirectAndRelatedAttributes();
+
+        // hide all attributes that aren't included within the select query
+        $model->makeHidden( array_diff(array_keys($model->getAttributes()), $directAttributes));
+
+        $this->loadRelated($model, $relatedAttributes);
+    }
+
+    protected function loadRelated($model, $relatedAttributes)
+    {
+        foreach ($relatedAttributes as $relation => $columns)
+            $model->load([$relation => function ($query) use ($columns)  {
                 $query->select($columns);
             }]);
     }

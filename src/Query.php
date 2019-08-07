@@ -128,6 +128,7 @@ class Query
      * @param $model Model
      * @return Model|Collection|string
      * @throws NoStringMatchesFound
+     * @throws NoQueryParameterFound
      */
     public function attachQueriesFromParams($model)
     {
@@ -167,11 +168,12 @@ class Query
     /**
      * @param $eloquent
      * @throws NoStringMatchesFound
+     * @throws NoQueryParameterFound
      */
     protected function prefetchOperations($eloquent)
     {
         if ($eloquent instanceof Model)
-            return;
+            Selector::createFromRequest()->selectFromModel($eloquent);
         else
         {
             $this->addFilterQuery($eloquent);
