@@ -88,10 +88,10 @@ class Associator
 
 
     /**
-     * @param $eloquent
+     * @param $eloquent Builder
      *
      */
-    public function associate($eloquent)
+    public function associateBuilder($eloquent)
     {
         // TODO call method if it is having an annotation
         foreach ($this->related as $relation)
@@ -108,6 +108,14 @@ class Associator
      */
     protected function associateAggressively($eloquent, $relation){
         $eloquent->with($relation);
+    }
+
+    /**
+     * @param $model Model
+     */
+    public function associateModel($model)
+    {
+        $model->load($this->related);
     }
 
 }

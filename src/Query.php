@@ -75,6 +75,7 @@ class Query
      * @return Model|Collection
      * @throws ModelNotFoundException
      * @throws NoStringMatchesFound
+     * @throws NoQueryParameterFound
      */
     public function build()
     {
@@ -173,7 +174,12 @@ class Query
     protected function prefetchOperations($eloquent)
     {
         if ($eloquent instanceof Model)
+        {
+            // TODO handel exception
             Selector::createFromRequest()->selectFromModel($eloquent);
+            Associator::createFromRequest()->associateModel($eloquent);
+        }
+
         else
         {
             $this->addFilterQuery($eloquent);
@@ -208,7 +214,7 @@ class Query
     public function attachAssociates($eloquent)
     {
         try {
-            Associator::createFromRequest()->associate($eloquent);
+            Associator::createFromRequest()->associateBuilder($eloquent);
         } catch (NoQueryParameterFound $e) {
         }
     }
