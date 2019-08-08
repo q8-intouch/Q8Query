@@ -12,6 +12,7 @@ use Q8Intouch\Q8Query\Core\ModelNotFoundException;
 use Q8Intouch\Q8Query\Core\NoQueryParameterFound;
 use Q8Intouch\Q8Query\Core\NoStringMatchesFound;
 use Q8Intouch\Q8Query\Core\ParamsMalformedException;
+use Q8Intouch\Q8Query\Core\Utils;
 use Q8Intouch\Q8Query\Core\Validator;
 use Q8Intouch\Q8Query\Filterer\Filterer;
 use Q8Intouch\Q8Query\Selector\Selector;
@@ -112,15 +113,9 @@ class Query
     public function getModel()
     {
         if (!$this->model)
-            foreach (config('q8-query.namespaces', []) as $prefix) {
-                $model = $prefix . '\\' . $this->params[0];
-                if (class_exists($model))
-                    return $model;
-            }
+           return Utils::getModel($this->params[0]);
         else
             return $this->model;
-
-        throw new ModelNotFoundException();
     }
 
     /**

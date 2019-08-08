@@ -1,4 +1,5 @@
 <?php
+
 namespace Q8Intouch\Q8Query\Core;
 
 
@@ -13,4 +14,21 @@ class Utils
         // split at last occurrence
         return preg_split('/\.(?=[^\.]*$)/', $str);
     }
+
+    /**
+     * @param $modelName string
+     * @return string
+     * @throws ModelNotFoundException
+     */
+    public static function getModel($modelName)
+    {
+        foreach (config('q8-query.namespaces', []) as $prefix) {
+            $model = $prefix . '\\' . $modelName;
+            if (class_exists($model))
+                return $model;
+        }
+
+        throw new ModelNotFoundException();
+    }
+
 }
