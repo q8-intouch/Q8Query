@@ -13,7 +13,7 @@ class QueryController extends BaseController
     public function get(Request $request, $url)
     {
         try {
-            return Query::QueryFromPathString($url)->build();
+            return Query::QueryFromPathString($url)->get();
         } catch (\Exception $e) {
             dd($e);
         }

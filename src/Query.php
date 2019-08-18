@@ -88,13 +88,19 @@ class Query
     /**
      * build function has to be created first
      * @return Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|object|null
+     * @throws ModelNotFoundException
+     * @throws NoQueryParameterFound
+     * @throws NoStringMatchesFound
      * @see build
      */
     public function get()
     {
-        return $this->isSingleObjectPath()
-            ? $this->builder->first()
-            : $this->builder->get();
+        return
+            $this->postFetchOperations(
+                $this->fetchIfBuilder(
+                    $this->build()
+                )
+            );
     }
 
     /**
@@ -113,7 +119,7 @@ class Query
     public function getModel()
     {
         if (!$this->model)
-           return Utils::getModel($this->params[0]);
+            return Utils::getModel($this->params[0]);
         else
             return $this->model;
     }
@@ -133,23 +139,9 @@ class Query
         }
         $this->prefetchOperations($model);
 
-        $result = $this->fetchIfBuilder($model);
-
-        return  $this->postfetchOperations($result);
+        return $model;
     }
 
-    /**
-     * @param $model
-     * @throws NoStringMatchesFound
-     */
-    protected function addFilterQuery($model)
-    {
-        try {
-            $filterer = Filterer::createFromRequest();
-            $filterer->filter($model);
-        } catch (NoQueryParameterFound $e) {
-        }
-    }
 
     /**
      * @param $index
@@ -164,24 +156,21 @@ class Query
     /**
      * @param $eloquent
      * @throws NoStringMatchesFound
-     * @throws NoQueryParameterFound
      */
     protected function prefetchOperations($eloquent)
     {
-        if ($eloquent instanceof Model)
-        {
-            // TODO handel exception
-            Selector::createFromRequest()->selectFromModel($eloquent);
-            Associator::createFromRequest()->associateModel($eloquent);
-        }
+        try {
+            if ($eloquent instanceof Model) {
+                Selector::createFromRequest()->selectFromModel($eloquent);
+                Associator::createFromRequest()->associateModel($eloquent);
+            } else {
 
-        else
-        {
-            $this->addFilterQuery($eloquent);
-            $this->attachAssociates($eloquent);
-            $this->selectAttributesFromQuery($eloquent);
+                Filterer::createFromRequest()->filter($eloquent);
+                Associator::createFromRequest()->associateBuilder($eloquent);
+                Selector::createFromRequest()->selectFromQuery($eloquent);
+            }
+        } catch (NoQueryParameterFound $e) {
         }
-
     }
 
     /**
@@ -202,28 +191,5 @@ class Query
         return $model instanceof Model ? $model : $model->get();
     }
 
-    /**
-     * @param $eloquent
-     * @throws NoStringMatchesFound
-     */
-    public function attachAssociates($eloquent)
-    {
-        try {
-            Associator::createFromRequest()->associateBuilder($eloquent);
-        } catch (NoQueryParameterFound $e) {
-        }
-    }
-
-    /**
-     * @param $query Builder
-     * @throws NoStringMatchesFound
-     */
-    public function selectAttributesFromQuery($query)
-    {
-        try {
-            Selector::createFromRequest()->selectFromQuery($query);
-        } catch (NoQueryParameterFound $e) {
-        }
-    }
 
 }
