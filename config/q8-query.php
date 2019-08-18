@@ -48,9 +48,19 @@ return [
 
     /**
      * values:
-     * 'strict': only call the relations having the appropriate annotation
+     * 'strict': only call the relations having the appropriate annotation || return type
      * 'loss': fetch any relation regardless having an annotation or not
      *
      */
-    "relational-mode" => 'strict'
+    "relational-mode" => 'strict',
+
+    /**
+     * param key for number of results per page
+     */
+    "paginator_size" => 'per_page',
+
+    /**
+     * param key for default paginator size
+     */
+    "paginator_default_size" => 10,
 ];

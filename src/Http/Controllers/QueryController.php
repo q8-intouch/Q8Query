@@ -12,8 +12,15 @@ class QueryController extends BaseController
 {
     public function get(Request $request, $url)
     {
+        $paginator_key = config('paginator_size', 'per_page');
+        $page_count =
+            $request->has($paginator_key)
+                ? $request->get($paginator_key)
+                : config('paginator_default_size', 10);
         try {
-            return Query::QueryFromPathString($url)->paginate();
+            return
+                Query::QueryFromPathString($url)
+                    ->paginate($page_count)->appends($request->except($paginator_key));
         } catch (\Exception $e) {
             dd($e);
         }

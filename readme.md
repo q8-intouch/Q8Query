@@ -30,7 +30,7 @@
 - filter using scopes as: functionName(params)
 - limit the count of related object on select, associate
 - add strict mode for fetching only annotated relations && filters
-
+- filter on associate ex: fetch user with orders where orders containing 'x'
 # running tests
 for running the tests use:  `vendor/bin/phpunit` within the package directory
 or config phpstrom by using the config file `phpunit.xml` within the package dir
