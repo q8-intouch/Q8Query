@@ -86,12 +86,10 @@ class Query
     }
 
     /**
-     * build function has to be created first
      * @return Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|object|null
      * @throws ModelNotFoundException
      * @throws NoQueryParameterFound
      * @throws NoStringMatchesFound
-     * @see build
      */
     public function get()
     {
@@ -188,8 +186,44 @@ class Query
      */
     protected function fetchIfBuilder($model)
     {
-        return $model instanceof Model ? $model : $model->get();
+        return $this->isModel($model) ? $model : $model->get();
     }
 
+    /**
+     * @param null $perPage
+     * @param array $columns
+     * @param string $pageName
+     * @param null $page
+     * @return Builder|Builder[]|\Illuminate\Database\Eloquent\Collection|Model
+     * @throws ModelNotFoundException
+     * @throws NoQueryParameterFound
+     * @throws NoStringMatchesFound
+     */
+    public function paginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
+    {
+        return
+                $this->paginateIfBuilder(
+                    $this->build(),
+                    $perPage,
+                    $columns,
+                    $pageName,
+                    $page
+            );
+    }
+
+    /**
+     * @param Builder|Model $model
+     * @param array $args
+     * @return Builder|Builder[]|\Illuminate\Database\Eloquent\Collection|Model
+     */
+    protected function paginateIfBuilder($model, ...$args)
+    {
+        return $this->isModel($model) ? $model : call_user_func_array( [$model, 'paginate'], $args) ;
+    }
+
+    protected function isModel($eloquent)
+    {
+        return $eloquent instanceof Model;
+    }
 
 }
