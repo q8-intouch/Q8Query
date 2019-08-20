@@ -52,7 +52,7 @@ return [
      * 'loss': fetch any relation regardless having an annotation or not
      *
      */
-    "relational-mode" => 'strict',
+    "caller-mode" => 'strict',
 
     /**
      * param key for number of results per page

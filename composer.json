@@ -8,7 +8,7 @@
     ],
     "require": {
         "orchestra/testbench": "^3.5",
-        "doctrine/annotations": "^1.6"
+        "jan-swiecki/simple-annotations": "^0.3.1"
     },
     "autoload": {
         "psr-4": {

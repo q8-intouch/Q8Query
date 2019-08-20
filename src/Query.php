@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Q8Intouch\Q8Query\Associator\Associator;
+use Q8Intouch\Q8Query\Core\Caller;
 use Q8Intouch\Q8Query\Core\ModelNotFoundException;
 use Q8Intouch\Q8Query\Core\NoQueryParameterFound;
 use Q8Intouch\Q8Query\Core\NoStringMatchesFound;
@@ -34,6 +35,16 @@ class Query
      * @var string
      */
     protected $model;
+
+    /**
+     * @var string
+     */
+    protected $returnType;
+
+    protected static $singleRelationPrefixes = [
+        'HasOne',
+        'BelongsTo'
+    ];
 
     /**
      *
@@ -74,9 +85,10 @@ class Query
 
     /**
      * @return Model|Collection
+     * @throws Core\Exceptions\MethodNotAllowedException
      * @throws ModelNotFoundException
      * @throws NoStringMatchesFound
-     * @throws NoQueryParameterFound
+     * @throws \ReflectionException
      */
     public function build()
     {
@@ -87,9 +99,10 @@ class Query
 
     /**
      * @return Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|object|null
+     * @throws Core\Exceptions\MethodNotAllowedException
      * @throws ModelNotFoundException
-     * @throws NoQueryParameterFound
      * @throws NoStringMatchesFound
+     * @throws \ReflectionException
      */
     public function get()
     {
@@ -127,8 +140,9 @@ class Query
      *
      * @param $model Model
      * @return Model|Collection|string
+     * @throws Core\Exceptions\MethodNotAllowedException
      * @throws NoStringMatchesFound
-     * @throws NoQueryParameterFound
+     * @throws \ReflectionException
      */
     public function attachQueriesFromParams($model)
     {
@@ -145,10 +159,14 @@ class Query
      * @param $index
      * @param $query Builder|Model
      * @return Builder
+     * @throws \ReflectionException
+     * @throws Core\Exceptions\MethodNotAllowedException
      */
     protected function updateQueryByParamSection($index, $query)
     {
-        return $index % 2 ? $query->whereKey($this->params[$index])->first() : $query->{$this->params[$index]}();
+        return $index % 2
+            ? $query->whereKey($this->params[$index])->first()
+            : (new Caller($query))->call($this->params[$index], $this->returnType);
     }
 
     /**
@@ -195,19 +213,20 @@ class Query
      * @param string $pageName
      * @param null $page
      * @return Builder|Builder[]|\Illuminate\Database\Eloquent\Collection|Model
+     * @throws Core\Exceptions\MethodNotAllowedException
      * @throws ModelNotFoundException
-     * @throws NoQueryParameterFound
      * @throws NoStringMatchesFound
+     * @throws \ReflectionException
      */
     public function paginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
     {
         return
-                $this->paginateIfBuilder(
-                    $this->build(),
-                    $perPage,
-                    $columns,
-                    $pageName,
-                    $page
+            $this->paginateIfBuilder(
+                $this->build(),
+                $perPage,
+                $columns,
+                $pageName,
+                $page
             );
     }
 
@@ -218,12 +237,21 @@ class Query
      */
     protected function paginateIfBuilder($model, ...$args)
     {
-        return $this->isModel($model) ? $model : call_user_func_array( [$model, 'paginate'], $args) ;
+        return $this->isModel($model)
+            ? $model
+            : $this->isSingleRelation()
+                ? $model->first()
+                : call_user_func_array([$model, 'paginate'], $args);
     }
 
     protected function isModel($eloquent)
     {
         return $eloquent instanceof Model;
+    }
+
+    protected function isSingleRelation()
+    {
+        return in_array(substr(strrchr($this->returnType, "\\"), 1), self::$singleRelationPrefixes);
     }
 
 }
