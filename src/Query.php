@@ -171,20 +171,56 @@ class Query
 
     /**
      * @param $eloquent
+     * @throws Core\Exceptions\MethodNotAllowedException
      * @throws NoStringMatchesFound
+     * @throws \ReflectionException
      */
     protected function prefetchOperations($eloquent)
     {
-        try {
-            if ($eloquent instanceof Model) {
-                Selector::createFromRequest()->selectFromModel($eloquent);
-                Associator::createFromRequest()->associateModel($eloquent);
-            } else {
+        if ($eloquent instanceof Model) {
+            $this->tryExecuteQuery(
+                Selector::class,
+                'createFromRequest',
+                'selectFromModel',
+                $eloquent);
+            $this->tryExecuteQuery(
+                Selector::class,
+                'createFromRequest',
+                'associateModel',
+                $eloquent);
+        } else {
+            $this->tryExecuteQuery(
+                Filterer::class,
+                'createFromRequest',
+                'filter',
+                $eloquent
+            );
+            $this->tryExecuteQuery(
+                Associator::class,
+                'createFromRequest',
+                'associateBuilder',
+                $eloquent
+            );
+            $this->tryExecuteQuery(
+                Selector::class,
+                'createFromRequest',
+                'selectFromQuery',
+                $eloquent
+            );
+        }
+    }
 
-                Filterer::createFromRequest()->filter($eloquent);
-                Associator::createFromRequest()->associateBuilder($eloquent);
-                Selector::createFromRequest()->selectFromQuery($eloquent);
-            }
+    /**
+     * @param $class
+     * @param $method
+     * @param $tailMethod
+     * @param array $args
+     * @return mixed
+     */
+    protected function tryExecuteQuery($class, $method, $tailMethod, ...$args)
+    {
+        try {
+            return call_user_func_array([$class::{$method}(), $tailMethod], $args);
         } catch (NoQueryParameterFound $e) {
         }
     }

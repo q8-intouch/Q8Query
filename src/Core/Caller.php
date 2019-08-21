@@ -35,20 +35,12 @@ class Caller
      */
     public function call($method, &$returnType = null)
     {
-        /** @noinspection PhpUnhandledExceptionInspection */
-        $reader = new Reader($this->reflection->getName(), $method);
-        // check for return/types && if not hidden before calling
-        $returnType = $this->getReturnType($method, $reader);
 
-        // fetch call mode
-        $mode = config('q8-query.caller-mode', 'strict');
         // check if strict mode enabled
-        if ( !$reader->getParameter('Hidden') && (($mode == 'strict' && $returnType) || $mode == 'loss')) {
+        if ($this->authorizeCallOrThrow($method)) {
 
             return $this->object->{$method}();
         }
-        else
-            throw new MethodNotAllowedException("Your are not authorized to call the following: {$method}");
     }
 
 
@@ -70,5 +62,38 @@ class Caller
     protected function getReturnType($method, $reader)
     {
         return $this->reflection->getMethod($method)->getReturnType() ?: $reader->getParameter('return');
+    }
+
+    /**
+     * @param $method
+     * @return bool
+     * @throws \ReflectionException
+     */
+    public function authorizeCall($method)
+    {
+        /** @noinspection PhpUnhandledExceptionInspection */
+        $reader = new Reader($this->reflection->getName(), $method);
+
+        // check for return/types && if not hidden before calling
+        $returnType = $this->getReturnType($method, $reader);
+
+        // fetch call mode
+        $mode = config('q8-query.caller-mode', 'strict');
+
+        return !$reader->getParameter('Hidden') && (($mode == 'strict' && $returnType) || $mode == 'loss');
+    }
+
+    /**
+     * @param $method
+     * @return mixed
+     * @throws MethodNotAllowedException
+     * @throws \ReflectionException
+     */
+    public function authorizeCallOrThrow ($method)
+    {
+        if ( $this->authorizeCall($method))
+            return true;
+
+        throw new MethodNotAllowedException("Your are not authorized to call the following: {$method}");
     }
 }

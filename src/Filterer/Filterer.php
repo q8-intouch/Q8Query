@@ -203,7 +203,6 @@ class Filterer
 //            else if ($validator)
             // else throw
         }
-        $query->toSql();
         return $query;
     }
 

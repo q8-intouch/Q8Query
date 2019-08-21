@@ -1,10 +1,12 @@
 <?php
+
 namespace Q8Intouch\Q8Query\Associator;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Laravel\packages\Q8Intouch\Q8Query\src\Core\Annotations\PublicRelation;
+use Q8Intouch\Q8Query\Core\Caller;
 use Q8Intouch\Q8Query\Core\Defaults;
 use Q8Intouch\Q8Query\Core\NoQueryParameterFound;
 use Q8Intouch\Q8Query\Core\NoStringMatchesFound;
@@ -57,6 +59,7 @@ class Associator
     {
         return config('q8-query.associator', 'associate');
     }
+
     /**
      * create a filterer using a native string without the filter parameter
      * ex: name eq "some string" and id ne 1 or id eq 1
@@ -89,15 +92,15 @@ class Associator
 
     /**
      * @param $eloquent Builder
-     *
+     * @throws \Q8Intouch\Q8Query\Core\Exceptions\MethodNotAllowedException
+     * @throws \ReflectionException
      */
     public function associateBuilder($eloquent)
     {
         // TODO call method if it is having an annotation
-        foreach ($this->related as $relation)
-        {
+        foreach ($this->related as $relation) {
             // check first if authorized/having annotation
-           $this->associateAggressively($eloquent, $relation);
+            $this->associateAggressively($eloquent, $relation);
         }
 
     }
@@ -105,16 +108,23 @@ class Associator
     /**
      * @param $eloquent
      * @param $relation
+     * @throws \ReflectionException
+     * @throws \Q8Intouch\Q8Query\Core\Exceptions\MethodNotAllowedException
      */
-    protected function associateAggressively($eloquent, $relation){
-        $eloquent->with($relation);
+    protected function associateAggressively($eloquent, $relation)
+    {
+        if ((new Caller($eloquent))->authorizeCallOrThrow($relation))
+            $eloquent->with($relation);
     }
 
     /**
      * @param $model Model
+     * @throws \Q8Intouch\Q8Query\Core\Exceptions\MethodNotAllowedException
+     * @throws \ReflectionException
      */
     public function associateModel($model)
     {
+        if ((new Caller($model))->authorizeCallOrThrow($this->related))
         $model->load($this->related);
     }
 
