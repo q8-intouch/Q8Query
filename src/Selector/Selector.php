@@ -5,6 +5,7 @@ namespace Q8Intouch\Q8Query\Selector;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
+use Q8Intouch\Q8Query\Core\Caller;
 use Q8Intouch\Q8Query\Core\Defaults;
 use Q8Intouch\Q8Query\Core\NoQueryParameterFound;
 use Q8Intouch\Q8Query\Core\NoStringMatchesFound;
@@ -84,7 +85,8 @@ class Selector
 
     /**
      * @param $query Builder
-     *
+     * @throws \Q8Intouch\Q8Query\Core\Exceptions\MethodNotAllowedException
+     * @throws \ReflectionException
      */
     public function selectFromQuery($query)
     {
@@ -102,10 +104,13 @@ class Selector
     /**
      * @param $query Builder
      * @param $related array
+     * @throws \ReflectionException
+     * @throws \Q8Intouch\Q8Query\Core\Exceptions\MethodNotAllowedException
      */
     protected function selectRelatedAttributes($query, $related)
     {
         foreach ($related as $relation => $columns)
+            if ((new Caller($query))->authorizeCallOrThrow($relation))
             $query->with([$relation => function ($query) use ($columns)  {
                 $query->select($columns);
             }]);
@@ -133,6 +138,8 @@ class Selector
 
     /**
      * @param $model Model
+     * @throws \Q8Intouch\Q8Query\Core\Exceptions\MethodNotAllowedException
+     * @throws \ReflectionException
      */
     public function selectFromModel($model)
     {
@@ -144,9 +151,16 @@ class Selector
         $this->loadRelated($model, $relatedAttributes);
     }
 
+    /**
+     * @param $model
+     * @param $relatedAttributes
+     * @throws \Q8Intouch\Q8Query\Core\Exceptions\MethodNotAllowedException
+     * @throws \ReflectionException
+     */
     protected function loadRelated($model, $relatedAttributes)
     {
         foreach ($relatedAttributes as $relation => $columns)
+            if ((new Caller($model))->authorizeCallOrThrow($relation))
             $model->load([$relation => function ($query) use ($columns)  {
                 $query->select($columns);
             }]);
