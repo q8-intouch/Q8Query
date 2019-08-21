@@ -20,8 +20,9 @@
 8. select related model's attributes
 9. fetch available related models on options request 
 10. support pagination
+11. fetch related model by relation type i.e:  if a one to one relation: object is returned instead of array 
+12. add strict mode for fetching only annotated relations && filters
 # Not supported yet: 
-- fetch related model by relation type i.e:  if a one to one relation: object is returned instead of array 
 - grouping operator for filterer
 - filter by mutator 
 - fetch options for a certain model scopes, mutators
@@ -29,7 +30,6 @@
 - upon requesting options: fetch description using annotation
 - filter using scopes as: functionName(params)
 - limit the count of related object on select, associate
-- add strict mode for fetching only annotated relations && filters
 - filter on associate ex: fetch user with orders where orders containing 'x'
 # running tests
 for running the tests use:  `vendor/bin/phpunit` within the package directory
