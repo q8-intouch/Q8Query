@@ -119,6 +119,10 @@ class FiltererTest extends TestCase
                 "scope inTime('test string',1,int)",
                 ['scope', "inTime", "'test string',1,int"]
             ],
+            [
+                "scope inTime()",
+                ['scope', "inTime"]
+            ],
         ];
     }
 
@@ -194,10 +198,10 @@ class FiltererTest extends TestCase
                 ]
             ],
             [
-                ['string', 'and', 'scope','active', '"string",13'],
+                ['string', 'and', 'scope','active', '"string", 13'],
                 [
                     new Expression("and", ['string']),
-                    new Expression("and", ['scope', 'active', '"string",13'])
+                    new Expression("and", ['scope', 'active', '"string", 13'])
                 ]
             ],
         ];
