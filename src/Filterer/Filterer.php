@@ -9,6 +9,7 @@ use Q8Intouch\Q8Query\Core\Defaults;
 use Q8Intouch\Q8Query\Core\NoQueryParameterFound;
 use Q8Intouch\Q8Query\Core\NoStringMatchesFound;
 use Q8Intouch\Q8Query\Core\Utils;
+use Q8Intouch\Q8Query\Filterer\FilterMethods\HasFilterer;
 
 class Filterer
 {
@@ -27,9 +28,10 @@ class Filterer
         'and' => 'where'
     ];
 
-    protected $complexFilters = [
-        'has' => 'filterByHas'
-    ];
+    /**
+     * @var Filterable[]
+     */
+    protected $customFilterers;
 
     /**
      * The following class is highly dependant on compiler and programming languages concepts
@@ -51,6 +53,15 @@ class Filterer
     {
         $this->expressions = $expressions;
         $this->validator = new Validator();
+        $this->initCustomFilters();
+    }
+
+    protected function initCustomFilters()
+    {
+        // TODO add custom filters from config
+        $this->customFilterers = [
+            new HasFilterer,
+        ];
     }
 
     /**
@@ -196,12 +207,9 @@ class Filterer
             $lexemes = $expression->lexemes;
             if ($this->validator->validateComparisonRules($lexemes, $operator)) {
                 $this->attachSimpleComparisonRule($query, $expression, $operator);
-            } else if ($this->validator->validateComplexComparisonRules($lexemes, $operator)) {
-                $this->{$this->complexFilters[$operator]}($query, $expression);
             }
-            // else if check complex
-//            else if ($validator)
-            // else throw
+            else
+                $this->checkCustomFilters($query, $expression);
         }
         return $query;
     }
@@ -246,36 +254,13 @@ class Filterer
         }
     }
 
-    /**
-     * @param $query Builder
-     * @param $expression Expression
-     */
-    protected function filterByHas($query, $expression)
+    protected function checkCustomFilters($query, $expression)
     {
-        $lexemes = $expression->lexemes;
-        if (count($lexemes) == 2) {
-            $query->whereHas($lexemes[1]);
-            return;
-        }
-        $subLexemes = array_slice($lexemes, 1);
-        if ($this->validator->validateComparisonRules($subLexemes, $operator)) {
-
-            $related = Utils::splitRelatedAndAttribute($lexemes[1]);
-            // validate against basic rules
-            $subLexemes[0] = $related[1];
-            $query->{$this->getHasClosure($expression)}($related[0], function ($query) use ($related, $subLexemes, $operator) {
-                $this->attachSimpleComparisonRule($query, new Expression('and', $subLexemes), $operator);
-            });
+        foreach ($this->customFilterers as $customFilterer)
+        {
+            if ($customFilterer->validate($expression))
+                $customFilterer->filter($query, $expression);
         }
     }
-
-    protected function getHasClosure($expression)
-    {
-        return [
-            'and' => 'whereHas',
-            'or' => 'orWhereHas',
-        ][$expression->logical];
-    }
-
 
 }

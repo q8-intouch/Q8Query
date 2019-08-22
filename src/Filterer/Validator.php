@@ -5,17 +5,17 @@ namespace Q8Intouch\Q8Query\Filterer;
 
 
 use Q8Intouch\Q8Query\Core\Defaults;
+use Q8Intouch\Q8Query\Filterer\FilterMethods\HasFilterer;
 
 class Validator
 {
 
     private $comparisonRules;
-    private $complexComparisonRules;
 
     public function __construct()
     {
         $this->comparisonRules = static::getComparisonRules();
-        $this->complexComparisonRules = static::getComplexComparisonRules();
+
 
     }
 
@@ -39,23 +39,6 @@ class Validator
         return $rules;
     }
 
-    /**
-     * rules that aren't having a certain pattern or rule
-     * no specific size, can consist of a sub simple rule, or can have multiple valid rules
-     * customized rules can be added by specifying the function name
-     * ex: 'has' operator is validated using 'validateHasOperator' function
-     * so the array has to specify the validateHasOperator with in the key 'has'
-     * functions must accept the following params:
-     *      1. lexemes: array
-     * the following
-     * @return array
-     */
-    protected static function getComplexComparisonRules()
-    {
-        return [
-            'has' => 'validateHasOperator'
-        ];
-    }
 
     /**
      * @param $lexemes array
@@ -90,39 +73,7 @@ class Validator
         return false;
     }
 
-    /**
-     * @param $lexemes
-     * @param null $operator
-     * @return bool
-     */
-    public function validateComplexComparisonRules($lexemes,
-                                                   &$operator = null)
-    {
-        // return false if lexemes are empty
-        if (!count($lexemes))
-            return false;
 
-        // check for special cases
-        foreach ($this->complexComparisonRules as $key => $function)
-        {
-            if ($this->{$function}($lexemes))
-            {
-                $operator = $key;
-                return true;
-            }
-        }
-        return false;
-
-    }
-
-    /**
-     * @param $lexemes
-     * @return bool
-     */
-    protected function validateHasOperator($lexemes)
-    {
-        return count ($lexemes)  > 1 && $lexemes[0] == 'has';
-    }
 
 
 }
