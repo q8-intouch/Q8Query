@@ -2,9 +2,10 @@
 
 namespace Q8Intouch\Q8Query\Test\Filterer;
 
+use Q8Intouch\Q8Query\Core\NoStringMatchesFound;
+use Q8Intouch\Q8Query\Core\Utils;
 use Q8Intouch\Q8Query\Filterer\Expression;
 use Q8Intouch\Q8Query\Filterer\Filterer;
-use Q8Intouch\Q8Query\Filterer\NoStringMatchesFound;
 use Q8Intouch\Q8Query\Test\TestCase;
 use ReflectionClass;
 
@@ -21,7 +22,6 @@ class FiltererTest extends TestCase
         parent::setUp();
         $this->splitBySpacesMethod = self::getMethod('splitBySpaces');
         $this->splitByLogicalTokensMethod = self::getMethod('splitByLogicalTokens');
-        $this->splitRelatedAndAttributeMethod = self::getMethod('splitRelatedAndAttribute');
     }
 
     protected static function getMethod($name)
@@ -72,7 +72,7 @@ class FiltererTest extends TestCase
      */
     public function testSplitRelatedAndAttribute($testCase, $testResult)
     {
-        $this->assertEquals($this->splitRelatedAndAttributeMethod->invokeArgs(null, [$testCase]), $testResult);
+        $this->assertEquals( Utils::splitRelatedAndAttribute($testCase), $testResult);
     }
 
 
@@ -114,6 +114,10 @@ class FiltererTest extends TestCase
             [
                 "new line\ncheck",
                 ['new', 'line', 'check']
+            ],
+            [
+                "scope inTime('test string',1,int)",
+                ['scope', "inTime", "'test string',1,int"]
             ],
         ];
     }
@@ -180,6 +184,20 @@ class FiltererTest extends TestCase
                 [
                     new Expression("and", []),
                     new Expression("or", ['string'])
+                ]
+            ],
+            [
+                ['string', 'or', 'scope', '"string",12'],
+                [
+                    new Expression("and", ['string']),
+                    new Expression("or", ['scope', '"string",12'])
+                ]
+            ],
+            [
+                ['string', 'and', 'scope','active', '"string",13'],
+                [
+                    new Expression("and", ['string']),
+                    new Expression("and", ['scope', 'active', '"string",13'])
                 ]
             ],
         ];

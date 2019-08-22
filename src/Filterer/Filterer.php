@@ -28,6 +28,8 @@ class Filterer
         'and' => 'where'
     ];
 
+    public static $filtererRegex = "/[^\(\)\s\"']+|(?<=\()(.+)(?=\))|\"([^\"]*)\"|'([^']*)'/";
+
     /**
      * @var Filterable[]
      */
@@ -133,7 +135,7 @@ class Filterer
     protected static function splitBySpaces(string $s)
     {
 
-        if (!preg_match_all("/[^\s\"']+|\"([^\"]*)\"|'([^']*)'/", $s, $matches))
+        if (!preg_match_all(self::$filtererRegex, $s, $matches))
             throw new NoStringMatchesFound("No string delimiters found please check the docs");
         return $matches[0];
     }

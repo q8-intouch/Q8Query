@@ -18,6 +18,7 @@ class Defaults
         '<='   => 'le',
         'has' => 'has',
         'like' => 'contain',
+        'scope' => 'scope',
     ];
 
     /**
