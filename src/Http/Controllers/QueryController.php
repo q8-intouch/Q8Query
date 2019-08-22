@@ -19,14 +19,13 @@ class QueryController extends BaseController
             $request->has($paginator_key)
                 ? $request->get($paginator_key)
                 : config('paginator_default_size', 10);
-        $reader = new Reader(User::class, 'employee');
-        $x = $reader->getParameter("Hidden"); // 1 (with number type)
+
         try {
             return
                 Query::QueryFromPathString($url)
                     ->paginate($page_count);//->appends($request->except($paginator_key));
         } catch (\Exception $e) {
-            dd($e);
+            throw $e;
         }
     }
 
