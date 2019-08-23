@@ -10,6 +10,7 @@ use Q8Intouch\Q8Query\Core\NoQueryParameterFound;
 use Q8Intouch\Q8Query\Core\NoStringMatchesFound;
 use Q8Intouch\Q8Query\Core\Utils;
 use Q8Intouch\Q8Query\Filterer\FilterMethods\HasFilterer;
+use Q8Intouch\Q8Query\Filterer\FilterMethods\ScopeFilterer;
 
 class Filterer
 {
@@ -23,7 +24,7 @@ class Filterer
      */
     protected $validator;
 
-    protected static $logicalTokens = [
+    public static $logicalTokens = [
         'or' => 'orWhere',
         'and' => 'where'
     ];
@@ -63,6 +64,7 @@ class Filterer
         // TODO add custom filters from config
         $this->customFilterers = [
             new HasFilterer,
+            new ScopeFilterer
         ];
     }
 
