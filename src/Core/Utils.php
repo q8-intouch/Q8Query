@@ -3,6 +3,8 @@
 namespace Q8Intouch\Q8Query\Core;
 
 
+use DocBlockReader\Reader;
+
 class Utils
 {
     /**
@@ -31,4 +33,15 @@ class Utils
         throw new ModelNotFoundException();
     }
 
+    /**
+     * @param $class \ReflectionClass
+     * @param $method string
+     * @param $reader Reader
+     * @return bool|mixed|null
+     * @throws \ReflectionException
+     */
+    public static function getReturnType($class, $method, $reader)
+    {
+        return $class->getMethod($method)->getReturnType() ?: $reader->getParameter('return');
+    }
 }

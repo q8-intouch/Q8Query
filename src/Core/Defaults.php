@@ -19,6 +19,7 @@ class Defaults
         'has' => 'has',
         'like' => 'contain',
         'scope' => 'scope',
+        'filterer' => 'filter',
     ];
 
     /**

@@ -33,4 +33,9 @@ class Option
      * @var array
      */
     public $extra;
+
+    /**
+     * @var array
+     */
+    public $args;
 }

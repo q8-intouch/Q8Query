@@ -43,7 +43,8 @@ return [
         '<'   => 'lt',
         '<='   => 'le',
         'has' => 'has',
-        'like' => 'contain'
+        'like' => 'contain',
+        'scope' => 'scope',
     ],
 
     /**

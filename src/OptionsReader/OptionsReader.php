@@ -5,6 +5,7 @@ namespace Q8Intouch\Q8Query\OptionsReader;
 use Q8Intouch\Q8Query\Core\ModelNotFoundException;
 use Q8Intouch\Q8Query\Core\Utils;
 use Q8Intouch\Q8Query\OptionsReader\Methods\RelationMethod;
+use Q8Intouch\Q8Query\OptionsReader\Methods\ScopeMethod;
 use ReflectionClass;
 use ReflectionMethod;
 
@@ -53,6 +54,7 @@ class OptionsReader
     protected function registerMethods()
     {
         $this->methodsSchemas[] = new RelationMethod();
+        $this->methodsSchemas[] = new ScopeMethod();
     }
 
 }

@@ -22,13 +22,12 @@
 10. support pagination
 11. fetch related model by relation type i.e:  if a one to one relation: object is returned instead of array 
 12. add strict mode for fetching only annotated relations && filters
+13. filter using scopes as: functionName(...params)
 # Not supported yet: 
 - grouping operator for filterer
-- filter by mutator 
 - fetch options for a certain model scopes, mutators
 - hide mutator if not requested by select
 - upon requesting options: fetch description using annotation
-- filter using scopes as: functionName(params)
 - limit the count of related object on select, associate
 - filter on associate ex: fetch user with orders where orders containing 'x'
 # running tests
