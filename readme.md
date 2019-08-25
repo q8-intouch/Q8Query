@@ -27,10 +27,7 @@
 15. order by any attribute
 # Not supported yet: 
 - grouping operator for filterer
-- hide mutator if not requested by select
-- upon requesting options: fetch description using annotation
 - limit the count of related object on select, associate
-- filter on associate ex: fetch user with orders where orders containing 'x'
 # running tests
 for running the tests use:  `vendor/bin/phpunit` within the package directory
 or config phpstrom by using the config file `phpunit.xml` within the package dir
