@@ -22,9 +22,22 @@ return [
     "filterer" => 'filter',
 
     /**
-     * param key used for associating related models ex:  www.example.com/User?associate=orders,orders
+     * param key used for associating related models ex:  www.example.com/User?associate=orders
      */
     "associator" => 'associate',
+
+    /**
+     * param key used for selecting related attributes and models ex:  www.example.com/User?select=name, orders.name,
+     */
+    'selector' => 'select',
+    /**
+     * param key used for selecting related attributes and models ex:  www.example.com/User?select=name, orders.name,
+     */
+    'orderer' => 'order_by',
+
+    /**
+     *  param key used for ordering models
+     */
 
     /**
      * tokens key words and are replaceable to suit any project

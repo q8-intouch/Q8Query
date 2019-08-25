@@ -10,6 +10,8 @@ use Q8Intouch\Q8Query\Core\Defaults;
 use Q8Intouch\Q8Query\Core\Utils;
 use Q8Intouch\Q8Query\OptionsReader\Option;
 use Q8Intouch\Q8Query\OptionsReader\Optionable;
+use ReflectionClass;
+use ReflectionMethod;
 
 class ScopeMethod implements Optionable
 {
@@ -30,6 +32,11 @@ class ScopeMethod implements Optionable
                 || $mode == 'loss');
     }
 
+    /**
+     * @param $class ReflectionClass
+     * @param $method ReflectionMethod
+     * @return Option
+     */
     public function getOptions($class, $method): Option
     {
         // scopeIsActive -> isActive
@@ -38,7 +45,7 @@ class ScopeMethod implements Optionable
         $option->name = $methodName;
         $option->type = "Filterer Method";
         $option->examples = [
-            '/' . $class->getShortName()  . '?' .Defaults::tokenFromConfig('filterer')
+            '/' . $class->getShortName()  . '?' . config('q8-query.filterer', 'filter')
                 .'='. Defaults::tokenFromConfig('scope') . ' ' .$methodName . '(...args)'  ,
         ];
         

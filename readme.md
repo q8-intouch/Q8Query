@@ -23,9 +23,10 @@
 11. fetch related model by relation type i.e:  if a one to one relation: object is returned instead of array 
 12. add strict mode for fetching only annotated relations && filters
 13. filter using scopes as: functionName(...params)
+14. fetch options for a certain model scopes
+15. order by any attribute
 # Not supported yet: 
 - grouping operator for filterer
-- fetch options for a certain model scopes, mutators
 - hide mutator if not requested by select
 - upon requesting options: fetch description using annotation
 - limit the count of related object on select, associate

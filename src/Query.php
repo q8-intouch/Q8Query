@@ -16,6 +16,7 @@ use Q8Intouch\Q8Query\Core\ParamsMalformedException;
 use Q8Intouch\Q8Query\Core\Utils;
 use Q8Intouch\Q8Query\Core\Validator;
 use Q8Intouch\Q8Query\Filterer\Filterer;
+use Q8Intouch\Q8Query\Orderer\Orderer;
 use Q8Intouch\Q8Query\Selector\Selector;
 
 class Query
@@ -193,6 +194,12 @@ class Query
                 Filterer::class,
                 'createFromRequest',
                 'filter',
+                $eloquent
+            );
+            $this->tryExecuteQuery(
+                Orderer::class,
+                'createFromRequest',
+                'order',
                 $eloquent
             );
             $this->tryExecuteQuery(

@@ -19,7 +19,13 @@ class Defaults
         'has' => 'has',
         'like' => 'contain',
         'scope' => 'scope',
+    ];
+
+    protected static $keywords = [
         'filterer' => 'filter',
+        'associator' => 'associate',
+        'selector' => 'select',
+        'orderer' => 'order_by'
     ];
 
     /**
@@ -40,6 +46,10 @@ class Defaults
     public static function tokenFromConfig($key)
     {
         return config('q8-query.tokens.'. $key,  static::$tokens[$key]);
+    }
+    public static function keywordFromConfig($key)
+    {
+        return config('q8-query.'. $key,  static::$keywords[$key]);
     }
 
     public  static $attributeRegex = "/^[a-zA-Z]+[0-9a-zA-Z]*$/";
