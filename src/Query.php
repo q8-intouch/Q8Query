@@ -93,9 +93,24 @@ class Query
      */
     public function build()
     {
-        /** @noinspection PhpUndefinedMethodInspection */
-        return $this->attachQueriesFromParams($this->getModel()::query());
 
+        return
+            $this->prefetchOperations($this->getModelQuery());
+
+    }
+
+    /**
+     * @return Builder|Model
+     * @throws Core\Exceptions\MethodNotAllowedException
+     * @throws ModelNotFoundException
+     * @throws \ReflectionException
+     */
+    public function getModelQuery()
+    {
+        /** @noinspection PhpUndefinedMethodInspection */
+        return $this->attachQueriesFromParams(
+            $this->getModel()::query()
+        );
     }
 
     /**
@@ -140,9 +155,8 @@ class Query
      * attach queries according url segments
      *
      * @param $model Model
-     * @return Model|Collection|string
+     * @return Builder|Model
      * @throws Core\Exceptions\MethodNotAllowedException
-     * @throws NoStringMatchesFound
      * @throws \ReflectionException
      */
     public function attachQueriesFromParams($model)
@@ -150,8 +164,6 @@ class Query
         for ($i = 1; $i < count($this->params); $i++) {
             $model = $this->updateQueryByParamSection($i, $model);
         }
-        $this->prefetchOperations($model);
-
         return $model;
     }
 
@@ -159,7 +171,7 @@ class Query
     /**
      * @param $index
      * @param $query Builder|Model
-     * @return Builder
+     * @return Builder|Model
      * @throws \ReflectionException
      * @throws Core\Exceptions\MethodNotAllowedException
      */
@@ -171,7 +183,9 @@ class Query
     }
 
     /**
+     * @noinspection PhpDocRedundantThrowsInspection
      * @param $eloquent
+     * @return mixed
      * @throws Core\Exceptions\MethodNotAllowedException
      * @throws NoStringMatchesFound
      * @throws \ReflectionException
@@ -215,6 +229,7 @@ class Query
                 $eloquent
             );
         }
+        return $eloquent;
     }
 
     /**

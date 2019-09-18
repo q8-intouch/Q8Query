@@ -2,8 +2,6 @@
 
 namespace Q8Intouch\Q8Query\Http\Controllers;
 
-use App\Models\User;
-use DocBlockReader\Reader;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Q8Intouch\Q8Query\Core\ModelNotFoundException;
