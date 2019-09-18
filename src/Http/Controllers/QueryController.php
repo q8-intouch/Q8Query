@@ -20,13 +20,7 @@ class QueryController extends BaseController
             $request->has($paginator_key)
                 ? $request->get($paginator_key)
                 : config('paginator_default_size', 10);
-        return
-            QueryBuilder::QueryFromPathString('User/1')
-                ->filter('id gt 0')
-                ->associate('order')
-                ->select('id, name, order.user_id, order.track_id')
-                ->order('name, desc')
-                ->get(); // or paginate()
+
         try {
             return
                 Query::QueryFromPathString($url)
