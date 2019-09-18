@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Q8Intouch\Q8Query\Associator\Associator;
 use Q8Intouch\Q8Query\Core\Caller;
+use Q8Intouch\Q8Query\Core\Exceptions\ModelInBuilderNotAllowedException;
 use Q8Intouch\Q8Query\Core\ModelNotFoundException;
 use Q8Intouch\Q8Query\Core\NoQueryParameterFound;
 use Q8Intouch\Q8Query\Core\NoStringMatchesFound;
@@ -28,6 +29,7 @@ class QueryBuilder
 
     /**
      * QueryBuilder constructor.
+     * @noinspection PhpDocMissingThrowsInspection ModelInBuilderNotAllowedException
      * @param $params array with the following pattern ['Model', {id}, ....]
      * @throws Core\Exceptions\MethodNotAllowedException
      * @throws ModelNotFoundException
@@ -39,6 +41,10 @@ class QueryBuilder
         /** @noinspection PhpUndefinedMethodInspection */
         $this->query = (new Query($params))->getModelQuery();
         // throw if the query is returned instead of model
+        if ($this->query instanceof Model)
+            /** @noinspection PhpUnhandledExceptionInspection */
+            throw new ModelInBuilderNotAllowedException(
+                "Path with an '/{id}' suffix is not allowed. Models cant be called within builder.");
 
     }
 

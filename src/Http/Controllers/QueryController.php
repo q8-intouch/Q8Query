@@ -2,11 +2,14 @@
 
 namespace Q8Intouch\Q8Query\Http\Controllers;
 
+use App\Models\User;
+use DocBlockReader\Reader;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Q8Intouch\Q8Query\Core\ModelNotFoundException;
 use Q8Intouch\Q8Query\OptionsReader\OptionsReader;
 use Q8Intouch\Q8Query\Query;
+use Q8Intouch\Q8Query\QueryBuilder;
 
 class QueryController extends BaseController
 {
@@ -17,7 +20,13 @@ class QueryController extends BaseController
             $request->has($paginator_key)
                 ? $request->get($paginator_key)
                 : config('paginator_default_size', 10);
-
+        return
+            QueryBuilder::QueryFromPathString('User/1')
+                ->filter('id gt 0')
+                ->associate('order')
+                ->select('id, name, order.user_id, order.track_id')
+                ->order('name, desc')
+                ->get(); // or paginate()
         try {
             return
                 Query::QueryFromPathString($url)
