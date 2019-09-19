@@ -71,16 +71,37 @@ class Caller
      */
     public function authorizeCall($method)
     {
+        $methods = explode('.', $method, 2);
         /** @noinspection PhpUnhandledExceptionInspection */
-        $reader = new Reader($this->reflection->getName(), $method);
+        $reader = new Reader($this->reflection->getName(), $methods[0]);
 
         // check for return/types && if not hidden before calling
-        $returnType = $this->getReturnType($method, $reader);
+        $returnType = $this->getReturnType($methods[0], $reader);
 
         // fetch call mode
         $mode = config('q8-query.caller-mode', 'strict');
 
-        return !$reader->getParameter('Hidden') && (($mode == 'strict' && $returnType) || $mode == 'loss');
+        return !$reader->getParameter('Hidden') && (($mode == 'strict' && $returnType) || $mode == 'loss')
+            && $this->authorizeRelated($methods);
+    }
+
+    /**
+     * @param $methods
+     * @return bool
+     * @throws \ReflectionException
+     */
+    protected function authorizeRelated($methods)
+    {
+        return
+            !(count($methods) > 1
+                && !(new Caller($this->getModel()->{$methods[0]}()->getModel()))->authorizeCall($methods[1]));
+    }
+
+    protected function getModel()
+    {
+        return $this->object instanceof Builder
+            ? $this->object->getModel()
+            : $this->object;
     }
 
     /**
@@ -89,9 +110,9 @@ class Caller
      * @throws MethodNotAllowedException
      * @throws \ReflectionException
      */
-    public function authorizeCallOrThrow ($method)
+    public function authorizeCallOrThrow($method)
     {
-        if ( $this->authorizeCall($method))
+        if ($this->authorizeCall($method))
             return true;
 
         throw new MethodNotAllowedException("Your are not authorized to call the following: {$method}");
