@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Q8Intouch\Q8Query\Core\Utils;
 use Q8Intouch\Q8Query\Filterer\Expression;
 use Q8Intouch\Q8Query\Filterer\Filterer;
-use Q8Intouch\Q8Query\Filterer\Option;
 
 class HasFilterer implements \Q8Intouch\Q8Query\Filterer\Filterable
 {

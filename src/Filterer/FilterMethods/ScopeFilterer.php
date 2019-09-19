@@ -6,12 +6,9 @@ namespace Q8Intouch\Q8Query\Filterer\FilterMethods;
 use Illuminate\Database\Eloquent\Builder;
 use Q8Intouch\Q8Query\Core\Caller;
 use Q8Intouch\Q8Query\Core\Defaults;
-use Q8Intouch\Q8Query\Core\NoStringMatchesFound;
-use Q8Intouch\Q8Query\Core\Utils;
 use Q8Intouch\Q8Query\Filterer\Expression;
 use Q8Intouch\Q8Query\Filterer\Filterable;
 use Q8Intouch\Q8Query\Filterer\Filterer;
-use Q8Intouch\Q8Query\Filterer\Option;
 
 class ScopeFilterer implements Filterable
 {
@@ -36,7 +33,7 @@ class ScopeFilterer implements Filterable
         $scope = $lexemes[1];
 
         /** @noinspection PhpUnhandledExceptionInspection */
-        (new Caller($query))->authorizeCallOrThrow( 'scope' . ucfirst($scope));
+        (new Caller($query))->authorizeCallOrThrow('scope' . ucfirst($scope));
 
         // get params if exists
         $args = $this->extractArgs($lexemes);

@@ -17,7 +17,10 @@ class Q8QueryServiceProvider extends ServiceProvider
     }
     public function register()
     {
-
+        $this->mergeConfigFrom(
+            __DIR__.'/../config/q8-query.php',
+            'q8-query'
+        );
     }
 
 }
