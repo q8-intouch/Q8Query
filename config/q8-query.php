@@ -62,9 +62,9 @@ return [
 
     /**
      * values:
-     * 'strict': only call the relations having the appropriate annotation || return type
-     * 'loss': fetch any relation regardless having an annotation or not
-     *
+     * 'strict': only call the unhidden relations having the appropriate annotation || return type
+     * 'loose': fetch any unhidden relation regardless having an annotation or not
+     * 'public': call any relation regardless hidden or not. plus no return type is specified
      */
     "caller-mode" => 'strict',
 

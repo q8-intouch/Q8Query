@@ -71,6 +71,13 @@ class Caller
      */
     public function authorizeCall($method)
     {
+        // fetch call mode
+        $mode = config('q8-query.caller-mode', 'strict');
+
+        // check this here to avoid any possible issues
+        if ($mode == 'public')
+            return true;
+
         $methods = explode('.', $method, 2);
         /** @noinspection PhpUnhandledExceptionInspection */
         $reader = new Reader($this->reflection->getName(), $methods[0]);
@@ -78,10 +85,7 @@ class Caller
         // check for return/types && if not hidden before calling
         $returnType = $this->getReturnType($methods[0], $reader);
 
-        // fetch call mode
-        $mode = config('q8-query.caller-mode', 'strict');
-
-        return !$reader->getParameter('Hidden') && (($mode == 'strict' && $returnType) || $mode == 'loss')
+        return !$reader->getParameter('Hidden') && (($mode == 'strict' && $returnType) || $mode == 'loose')
             && $this->authorizeRelated($methods);
     }
 
