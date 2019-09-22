@@ -6,7 +6,7 @@ use App\Models\User;
 use DocBlockReader\Reader;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
-use Q8Intouch\Q8Query\Core\ModelNotFoundException;
+use Q8Intouch\Q8Query\Core\Exceptions\ModelNotFoundException;
 use Q8Intouch\Q8Query\OptionsReader\OptionsReader;
 use Q8Intouch\Q8Query\Query;
 use Q8Intouch\Q8Query\QueryBuilder;

@@ -4,6 +4,7 @@ namespace Q8Intouch\Q8Query\Core;
 
 
 use DocBlockReader\Reader;
+use Q8Intouch\Q8Query\Core\Exceptions\ModelNotFoundException;
 
 class Utils
 {

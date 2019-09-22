@@ -1,10 +1,10 @@
 <?php
 
-namespace Q8Intouch\Q8Query\Core;
+namespace Q8Intouch\Q8Query\Core\Exceptions;
 use Exception;
 use Throwable;
 
-class ParamsMalformedException extends Exception
+class PathMalformedException extends Exception
 {
     public function __construct($message = "", $code = 0, Throwable $previous = null)
     {

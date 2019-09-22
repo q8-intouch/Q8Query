@@ -2,7 +2,7 @@
 
 namespace Q8Intouch\Q8Query\OptionsReader;
 
-use Q8Intouch\Q8Query\Core\ModelNotFoundException;
+use Q8Intouch\Q8Query\Core\Exceptions\ModelNotFoundException;
 use Q8Intouch\Q8Query\Core\Utils;
 use Q8Intouch\Q8Query\OptionsReader\Methods\RelationMethod;
 use Q8Intouch\Q8Query\OptionsReader\Methods\ScopeMethod;

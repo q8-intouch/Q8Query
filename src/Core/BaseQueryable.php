@@ -5,7 +5,8 @@ namespace Q8Intouch\Q8Query\Core;
 
 
 use Illuminate\Http\Request;
-use Q8Intouch\Q8Query\Selector\Selector;
+use Q8Intouch\Q8Query\Core\Exceptions\NoQueryParameterFound;
+use Q8Intouch\Q8Query\Core\Exceptions\NoStringMatchesFound;
 
 abstract class BaseQueryable
 {
@@ -30,7 +31,7 @@ abstract class BaseQueryable
      * if null is passed the filtered uses the globals
      *
      * @param Request|null $request
-     * @return Selector
+     * @return static
      * @throws NoQueryParameterFound
      * @throws NoStringMatchesFound
      */

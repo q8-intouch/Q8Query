@@ -7,8 +7,8 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Q8Intouch\Q8Query\Core\Caller;
 use Q8Intouch\Q8Query\Core\Defaults;
-use Q8Intouch\Q8Query\Core\NoQueryParameterFound;
-use Q8Intouch\Q8Query\Core\NoStringMatchesFound;
+use Q8Intouch\Q8Query\Core\Exceptions\NoQueryParameterFound;
+use Q8Intouch\Q8Query\Core\Exceptions\NoStringMatchesFound;
 use Q8Intouch\Q8Query\Core\Utils;
 
 class Selector

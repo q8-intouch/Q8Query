@@ -5,11 +5,10 @@ namespace Q8Intouch\Q8Query\Associator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use Laravel\packages\Q8Intouch\Q8Query\src\Core\Annotations\PublicRelation;
 use Q8Intouch\Q8Query\Core\Caller;
 use Q8Intouch\Q8Query\Core\Defaults;
-use Q8Intouch\Q8Query\Core\NoQueryParameterFound;
-use Q8Intouch\Q8Query\Core\NoStringMatchesFound;
+use Q8Intouch\Q8Query\Core\Exceptions\NoQueryParameterFound;
+use Q8Intouch\Q8Query\Core\Exceptions\NoStringMatchesFound;
 
 class Associator
 {
