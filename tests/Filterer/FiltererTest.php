@@ -2,7 +2,7 @@
 
 namespace Q8Intouch\Q8Query\Test\Filterer;
 
-use Q8Intouch\Q8Query\Core\NoStringMatchesFound;
+use Q8Intouch\Q8Query\Core\Exceptions\NoStringMatchesFound;
 use Q8Intouch\Q8Query\Core\Utils;
 use Q8Intouch\Q8Query\Filterer\Expression;
 use Q8Intouch\Q8Query\Filterer\Filterer;

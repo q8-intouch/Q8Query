@@ -3,7 +3,7 @@
 namespace Q8Intouch\Q8Query\Test\Orderer;
 
 
-use Q8Intouch\Q8Query\Core\NoStringMatchesFound;
+use Q8Intouch\Q8Query\Core\Exceptions\NoStringMatchesFound;
 use Q8Intouch\Q8Query\Filterer\Filterer;
 use Q8Intouch\Q8Query\Orderer\Orderer;
 use ReflectionClass;
