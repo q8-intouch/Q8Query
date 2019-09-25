@@ -12,7 +12,7 @@ use Q8Intouch\Q8Query\Core\Caller;
 use Q8Intouch\Q8Query\Core\Exceptions\ModelNotFoundException;
 use Q8Intouch\Q8Query\Core\Exceptions\NoQueryParameterFound;
 use Q8Intouch\Q8Query\Core\Exceptions\NoStringMatchesFound;
-use Q8Intouch\Q8Query\Core\ParamsMalformedException;
+use Q8Intouch\Q8Query\Core\Exceptions\ParamsMalformedException;
 use Q8Intouch\Q8Query\Core\Utils;
 use Q8Intouch\Q8Query\Core\Validator;
 use Q8Intouch\Q8Query\Filterer\Filterer;
