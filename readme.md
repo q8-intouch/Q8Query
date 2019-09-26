@@ -1,23 +1,40 @@
 
 # Installation 
+1- Add the package repo to the repository array in the composer.json file as follows
+```json
+{
+  "require": { 
+  },
+ "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://gitlab.com/q8intouch-php/q8query"
+        }
+  ]
+}
+```
+2- run `composer require q8-intouch/q8query` or add it manually to the require key
 
-### publish config 
+### Publish config 
 `php artisan vendor:publish --provider="Q8Intouch\Q8Query\Q8QueryServiceProvider" --tag="config"`
 
 
 
 # Intro
-This package provided an more rich API features. The following document covers
-the available configs available, a technical overview of the components and an API overview.
+This package provides an API interface that allows the client to fetch, filter, select and ordering any remote resource
+with no extra implementation from the backend side. Once you have implemented the backend basic models and relations,
+you are ready to use the package.
+
+The following document covers
+the available configs, a technical overview of the components, an API overview and various examples.
 
 
 
 # Config 
 
-1. The package ships with 3 modes that are interchangeable using the config file. Each mode modifies the security layer 
-by adding or removing restrictions to the calling methods. Calling a method that doesn't follow the strictly rules that are
+1. The package ships with 3 modes that are interchangeable using the config file. Each mode modifies the security layer by adding or removing restrictions to the calling methods. Calling a method that doesn't follow the strict rules that are
 associated with the selected mode, will throw a `Q8Intouch\Q8Query\Core\Exceptions\MethodNotAllowedException`. The rules are as follows:
-    * `strict` (Recommended): The methods must has a return type specified in the php doc block ex: 
+    * `strict` (Recommended): The methods must have a return type specified in the PHP doc block ex: 
     ```php
      /**
          * some extra docs
@@ -32,16 +49,16 @@ associated with the selected mode, will throw a `Q8Intouch\Q8Query\Core\Exceptio
    ```php
     /**
         * some extra docs
-        * @Hidden // using this annotation will pervent the api calls  
+        * @Hidden // using this annotation will prevent the API calls  
         ...
      */
    ```
-   * `loose`: Any method can be called regardless having a return type or not as long as it doesnt contain the annotation `@Hidden`. 
+   * `loose`: Any method can be called regardless of having a return type or not as long as it doesn't contain the annotation `@Hidden`. 
    It does some minor validations on the return type, but no protection is granted.
     **Note: Use this mode carefully as it can be used for RCE Attacks**
    * `public`: This mode will ignore any validations on return types or annotations. This means even the `@Hidden` annotation will be ignored. **use it only for testing, not recommended for production**
    
-2. The package looks up for models in the ony provided namespaces within the config file. If 2 models are having the same name
+2. The package looks up for models in the only provided namespaces within the config file. If 2 models are having the same name
 the package will prioritize the lookup by order of namespaces by index, where 0 index is the highest priority.
 
 3. More documented configs are available within q8-query.php
@@ -49,14 +66,14 @@ the package will prioritize the lookup by order of namespaces by index, where 0 
  
 # Technical overview: 
  
-The Package provides the following modules: 
+The package provides the following modules: 
 - `Associator`: associate any relation with the called model
     - usage : 
     ```php
        //TODO
     ```
 
-- `Filterer`: provides a various featured filtered options.
+- `Filterer`: provides various featured filtered options.
     - features: comparison operators, scopes filters, multi-depth has filter
     - Extensions: The filterer can be extended with multiple filters by following the next steps: 
         - // TODO
@@ -84,7 +101,7 @@ The Package provides the following modules:
     ```php
     //TODO
     ```
-- `Query`: Acts as an interface for all the previous modules targeting the form calls(either from api or web).
+- `Query`: Acts as an interface for all the previous modules targeting the form calls(either from API or web).
  Upon calling Query module, it checks for the available get parameters and calls up the previous modules
   according to the rules that are specified within the modules 
     - Usage: 
@@ -93,10 +110,15 @@ The Package provides the following modules:
 - `QueryBuilder`: Builds a query that support all the previous models
     - Usage: 
        ```php
-       // TODO
+       QueryBuilder::QueryFromPathString('User') // can use also: User/1/order
+           ->filter('id gt 0')
+           ->associate('orders')
+           ->select('id, name, orders.id, orders.track_id')
+           ->order('name, desc')
+           ->get(); // or paginate()
        ```
        
-# Api Calls 
+# API Calls 
 The package ships by default with an API handler that can be called by default as `GET {domain}/Q8Query/{Model}`. 
 The url can be extended the followings pattern (/{id}/{relationName})* means that the followings will be a valid urls: 
 - `Q8Query/User` => fetch all the users on the system
@@ -114,15 +136,14 @@ Invalid urls Ex:
 
 ### Available Params
 The following default parameters can be used for various respond modifications 
-- `filter`: the filter method can be used to filter the results either with direct comparison operators
- or related models comparisons. 
+- `filter`: the filter method can be used to filter the results either with direct comparison operators or related models comparisons. 
     - Usage: expression (logical expression)*
         - expression: each expression is considered as a filter option. Mainly there are 2 types of tokens;
             - simple comparison tokens which are straightforward as indicated in the tokens table 
-            - complex filterers: may consists of multiple formats 
+            - complex filterers: may consist of multiple formats 
                 - `has`: filter by related models as fetching users having orders, or users having orders.id greater than 1
-                - `scope`: call a custom complex filters which are implemented on backend as fetching active users
-                    - **Notice**: the scopes has to be implemented within the model following laravel standard scopes format
+                - `scope`: call a custom complex filters which are implemented on the backend as fetching active users
+                    - **Notice**: the scopes have to be implemented within the model following laravel standard scopes format
                     
                     Ex: defining a method for `/User?filter=scope active(3)` that fetches the active users within the last 3 days 
                 ```php
@@ -152,11 +173,11 @@ The following default parameters can be used for various respond modifications
         | or      | or | expression `or` expression |
         | and      | and      |   expression `and` expression  |
 
-- `associate`: associate multi-layered comma separated related models with respond
+- `associate`: associate multi-layered comma-separated related models with respond
    ex: 
    - ?associate=orders.address, employee, 
 
-- `select`: select a certain attributes either from the same model or related model.
+- `select`: select certain attributes either from the same model or related model.
  **However, all of the primary keys and foreign must be selected in case of the selecting from related models.**
     ex: 
     - ?select=name, id, order.user_id, order.id, order.track_id
@@ -164,27 +185,58 @@ The following default parameters can be used for various respond modifications
 - `order_by`: syntax: `column ',' {asc|desc}` 
     ex: ?order_by=id, desc
  
- 
+# Examples
+- fetch all users
+    - `/Q8Query/User`
+- fetch the user with an id = 1
+    - `/Q8Query/User/1`
+- fetch the user's orders
+    - `/Q8Query/User/1/orders`
+- fetch the user's with an id greater than 10
+    - `Q8Query/User?filter=id gt 10`
+- fetch the users having the name 'Loren Epsom' 
+    - `Q8Query/User?filter=name eq 'Loren Epsom'`
+- fetch the users having 'Loren Epsom' in their name
+    - `Q8Query/User?filter=name contains 'Loren Epsom'`
+- fetch the users having at least 1 order
+    - `Q8Query/User?filter=has orders`
+- fetch the users having at least 1 order review on their orders
+    - `Q8Query/User?filter=has orders.order_review`
+- fetch the users having order track id contains 'Loren Epsom' 
+    - `Q8Query/User?filter=has orders.track_id contains 'loren epsom'`
+- fetch the users where there id = 1 or id >= 20
+    - `Q8Query/User?filter=id eq 1 or id ge 20`
+- fetch the active users within the last 3 days and id < 100
+    - `Q8Query/User?filter=scope active(3) or id lt 1`
+- fetch users with their orders addresses and city details
+    - `Q8Query/User?associate=order.address, city`
+- fetch users names and their orders track_ids only
+    - `Q8Query/User?select=name, id, order.user_id, order.id, order.track_id`
+- fetch users having id > 10 along side there orders
+    - `Q8Query/User?filter=id gt 10&associate=orders`
+- fetch users having id > 3 ordered by id in descending order
+    - `Q8Query/User?filter=id gt 3&order_by=id, desc`
+
 # Features:
 
-1. fetch models by url schema
+1. fetch models by URL schema
 2. fetch a certain model by id
-3. fetch related models by specifying related name
+3. fetch related models by specifying a related name
 4. filter using logic operators
 5. filter using Comparison operators
 6. associate a related model
-7. select certain attributes from model
+7. select certain attributes from the model
 8. select related model's attributes
 9. fetch available related models on options request 
 10. support pagination
-11. fetch related model by relation type i.e:  if a one to one relation: object is returned instead of array 
-12. add strict mode for fetching only annotated relations && filters
+11. fetch related model by relation type i.e:  if a one to one relation: object is returned instead of an array 
+12. add a strict mode for fetching only annotated relations && filters
 13. filter using scopes as: functionName(...params)
 14. fetch options for a certain model scopes
 15. order by any attribute
 # Not supported yet: 
 - grouping operator for filterer
-- limit the count of related object on select, associate
+- limit the count of the related object on select, associate
 # running tests
 for running the tests use:  `vendor/bin/phpunit` within the package directory
 or config phpstrom by using the config file `phpunit.xml` within the package dir
