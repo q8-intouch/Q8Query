@@ -7,6 +7,7 @@ namespace Q8Intouch\Q8Query\Core;
 use DocBlockReader\Reader;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Q8Intouch\Q8Query\Core\Exceptions\MethodNotAllowedException;
 
 class Caller
@@ -50,7 +51,7 @@ class Caller
      */
     protected function getModelClass($eloquent)
     {
-        return $eloquent instanceof Builder ? get_class($eloquent->getModel()) : get_class($eloquent);
+        return $eloquent instanceof Builder | $eloquent instanceof Relation  ? get_class($eloquent->getModel()) : get_class($eloquent);
     }
 
     /**

@@ -29,7 +29,7 @@ class ScopeMethod implements Optionable
         return Str::startsWith($method->getName(), 'scope')
             && !$reader->getParameter('Hidden')
             && (($mode == 'strict' && $this->returnType)
-                || $mode == 'loss');
+                || $mode == 'loose');
     }
 
     /**
