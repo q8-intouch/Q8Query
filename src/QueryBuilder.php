@@ -7,6 +7,7 @@ namespace Q8Intouch\Q8Query;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Laravel\Passport\Scope;
 use Q8Intouch\Q8Query\Associator\Associator;
 use Q8Intouch\Q8Query\Core\Caller;
 use Q8Intouch\Q8Query\Core\Exceptions\ModelInBuilderNotAllowedException;
@@ -18,6 +19,7 @@ use Q8Intouch\Q8Query\Core\Utils;
 use Q8Intouch\Q8Query\Core\Validator;
 use Q8Intouch\Q8Query\Filterer\Filterer;
 use Q8Intouch\Q8Query\Orderer\Orderer;
+use Q8Intouch\Q8Query\Scoper\Scoper;
 use Q8Intouch\Q8Query\Selector\Selector;
 
 class QueryBuilder
@@ -124,5 +126,16 @@ class QueryBuilder
             $columns,
             $pageName,
             $page);
+    }
+
+    /**
+     * @param $string
+     * @return $this
+     * @throws NoStringMatchesFound
+     */
+    public function scope($string)
+    {
+        Scoper::createFromString($string)->scope($this->query);
+        return $this;
     }
 }

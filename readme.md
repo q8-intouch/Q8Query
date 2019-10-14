@@ -135,7 +135,9 @@ Invalid urls Ex:
 - `Q8Query/User/1/orders/address`
 
 ### Available Params
-The following default parameters can be used for various respond modifications 
+The following default parameters can be used for various respond modifications. Each parameter is parsed differently 
+due to some security concerns. So, some of the followings will throw if the passed parameters doest match the exact required
+format while some will just ignore the illegal characters and continue with the parsing nonetheless
 - `filter`: the filter method can be used to filter the results either with direct comparison operators or related models comparisons. 
     - Usage: expression (logical expression)*
         - expression: each expression is considered as a filter option. Mainly there are 2 types of tokens;

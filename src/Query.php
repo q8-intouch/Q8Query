@@ -17,6 +17,7 @@ use Q8Intouch\Q8Query\Core\Utils;
 use Q8Intouch\Q8Query\Core\Validator;
 use Q8Intouch\Q8Query\Filterer\Filterer;
 use Q8Intouch\Q8Query\Orderer\Orderer;
+use Q8Intouch\Q8Query\Scoper\Scoper;
 use Q8Intouch\Q8Query\Selector\Selector;
 
 class Query
@@ -226,6 +227,12 @@ class Query
                 Selector::class,
                 'createFromRequest',
                 'selectFromQuery',
+                $eloquent
+            );
+            $this->tryExecuteQuery(
+                Scoper::class,
+                'createFromRequest',
+                'scope',
                 $eloquent
             );
         }

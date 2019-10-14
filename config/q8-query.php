@@ -77,4 +77,9 @@ return [
      * param key for default paginator size
      */
     "paginator_default_size" => 10,
+
+    /**
+     * param key used for scoping related models ex:  www.example.com/User?scope=active(3)
+     */
+    "scoper" => 'scope'
 ];
