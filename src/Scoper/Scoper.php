@@ -44,8 +44,7 @@ class Scoper extends BaseQueryable
             /** @noinspection PhpUnhandledExceptionInspection */
             (new Caller($query))->authorizeCallOrThrow('scope' . ucfirst($closure));
 
-//            call_user_func_array([$query, $closure], $args);
-            $query->$closure();
+            call_user_func_array([$query, $closure], $args);
             $query->toSql();
         }
     }
