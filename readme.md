@@ -136,7 +136,7 @@ Invalid urls Ex:
 
 ### Available Params
 The following default parameters can be used for various respond modifications. Each parameter is parsed differently 
-due to some security concerns. So, some of the followings will throw if the passed parameters doest match the exact required
+due to some security concerns. So, some of the followings will throw if the passed parameters doesn't match the exact required
 format while some will just ignore the illegal characters and continue with the parsing nonetheless
 - `filter`: the filter method can be used to filter the results either with direct comparison operators or related models comparisons. 
     - Usage: expression (logical expression)*
@@ -186,6 +186,17 @@ format while some will just ignore the illegal characters and continue with the 
   
 - `order_by`: syntax: `column ',' {asc|desc}` 
     ex: ?order_by=id, desc
+    
+- `scope`: the acts as a utility parameter which is used to call a different to certain queries. Ex: a complex order method, 
+a dynamic select, or a filterer. However, don't get confused by the `filter` as they are having the same keyword and
+ act similarly in some cases. 
+    - syntax: `(function['('(values,)*')'(','))*`
+    - ex: 
+        - ?scope=orderByUserMessages(), attachMessagesCount(1), attachUserWorkingHours("DD:HH:MM")
+        - ?scope=orderByUserMessages
+    - **NOTES**: 
+        - scope only works on queries which means that fetching a single object as `User/1` won't work and the backend server
+        will just ignore the `scope` parameter in this case 
  
 # Examples
 - fetch all users
@@ -218,6 +229,8 @@ format while some will just ignore the illegal characters and continue with the 
     - `Q8Query/User?filter=id gt 10&associate=orders`
 - fetch users having id > 3 ordered by id in descending order
     - `Q8Query/User?filter=id gt 3&order_by=id, desc`
+- fetch users and attach working hours in day:hours:minutes format
+    - `Q8Query/User?scope=attachUserWorkingHours("DD:HH:MM")`
 
 # Features:
 
