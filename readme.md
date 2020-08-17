@@ -1,4 +1,3 @@
-
 # Installation 
 1- Add the package repo to the repository array in the composer.json file as follows
 ```json
@@ -255,3 +254,8 @@ a dynamic select, or a filterer. However, don't get confused by the `filter` as 
 # running tests
 for running the tests use:  `vendor/bin/phpunit` within the package directory
 or config phpstrom by using the config file `phpunit.xml` within the package dir
+
+## TODO
+1. add tags for diffrent laravel versions
+2. add policies support for authorization
+3. laravel 7.0 cors update later
