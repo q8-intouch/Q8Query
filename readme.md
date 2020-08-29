@@ -7,7 +7,7 @@
  "repositories": [
         {
             "type": "vcs",
-            "url": "https://gitlab.com/q8intouch-php/q8query"
+            "url": "https://github.com/q8-intouch/Q8Query"
         }
   ]
 }
